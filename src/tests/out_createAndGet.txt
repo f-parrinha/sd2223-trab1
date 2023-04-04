@@ -1,0 +1,9 @@
+Use: java aula3.clients.CreateUserClient name pwd domain displayName
+Use: java aula3.clients.CreateUserClient name pwd domain displayName
+Result: nmp
+Result: null
+Use: java aula2.clients.GetUserClient name password
+Use: java aula2.clients.GetUserClient name password
+null
+null
+User [name=nmp, pwd=12345, displayName=Nuno Preguica, domain=nova]

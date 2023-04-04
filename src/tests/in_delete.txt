@@ -1,0 +1,29 @@
+# TEST UPDATE 0 - no arguments
+java -cp sd2223.jar aula3.clients.CreateUserClient nmp 12345 nova "Nuno Preguica"
+java -cp sd2223.jar aula3.clients.DeleteUserClient
+
+# TEST DELETE 1 - invalid argument number
+java -cp sd2223.jar aula3.clients.CreateUserClient nmp 12345 nova "Nuno Preguica"
+java -cp sd2223.jar aula3.clients.DeleteUserClient nmp
+
+# TEST DELETE 2 - user does not exist
+java -cp sd2223.jar aula3.clients.CreateUserClient nmp 12345 nova "Nuno Preguica"
+java -cp sd2223.jar aula3.clients.DeleteUserClient erro 12345
+
+# TEST DELETE 3 - invalid password
+java -cp sd2223.jar aula3.clients.CreateUserClient nmp 12345 nova "Nuno Preguica"
+java -cp sd2223.jar aula3.clients.DeleteUserClient nmp erro
+
+# TEST DELETE 4 - success
+java -cp sd2223.jar aula3.clients.CreateUserClient nmp 12345 nova "Nuno Preguica"
+java -cp sd2223.jar aula3.clients.DeleteUserClient nmp 12345
+java -cp sd2223.jar aula3.clients.GetUserClient nmp 12345
+
+# TEST DELETE 5 - ALL
+java -cp sd2223.jar aula3.clients.CreateUserClient nmp 12345 nova "Nuno Preguica"
+java -cp sd2223.jar aula3.clients.DeleteUserClient
+java -cp sd2223.jar aula3.clients.DeleteUserClient nmp
+java -cp sd2223.jar aula3.clients.DeleteUserClient erro 12345
+java -cp sd2223.jar aula3.clients.DeleteUserClient nmp erro
+java -cp sd2223.jar aula3.clients.DeleteUserClient nmp 12345
+java -cp sd2223.jar aula3.clients.GetUserClient nmp 12345
