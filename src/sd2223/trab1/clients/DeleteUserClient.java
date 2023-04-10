@@ -1,6 +1,6 @@
 package sd2223.trab1.clients;
 
-import sd2223.trab1.server.Discovery;
+import sd2223.trab1.discovery.Discovery;
 import java.io.IOException;
 import java.net.URI;
 import java.util.logging.Logger;

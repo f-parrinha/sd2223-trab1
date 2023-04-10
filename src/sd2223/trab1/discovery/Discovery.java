@@ -1,4 +1,4 @@
-package sd2223.trab1.server;
+package sd2223.trab1.discovery;
 
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -20,7 +20,7 @@ public interface Discovery {
 	 * @param serviceName - the name of the service
 	 * @param serviceURI - the uri of the service
 	 */
-	public void announce(String serviceName, String serviceURI);
+	public void announce(String domainName, String serviceName, String serviceURI);
 
 	/**
 	 * Get discovered URIs for a given service name
@@ -52,7 +52,7 @@ class DiscoveryImpl implements Discovery {
 	static final int DISCOVERY_ANNOUNCE_PERIOD = 1000;
 
 	// Replace with appropriate values...
-	static final InetSocketAddress DISCOVERY_ADDR = new InetSocketAddress("225.10.10.10", 9001);
+	static final InetSocketAddress DISCOVERY_ADDR = new InetSocketAddress("226.226.226.226", 2266);
 
 	// Used separate the two fields that make up a service announcement.
 	private static final String DELIMITER = "\t";
@@ -76,11 +76,11 @@ class DiscoveryImpl implements Discovery {
 	}
 
 	@Override
-	public void announce(String serviceName, String serviceURI) {
+	public void announce(String domainName, String serviceName, String serviceURI) {
 		Log.info(String.format("Starting Discovery announcements on: %s for: %s -> %s\n", DISCOVERY_ADDR, serviceName,
 				serviceURI));
 
-		var pktBytes = String.format("%s%s%s", serviceName, DELIMITER, serviceURI).getBytes();
+		var pktBytes = String.format("%s:%s%s%s", domainName, serviceName, DELIMITER, serviceURI).getBytes();
 		var pkt = new DatagramPacket(pktBytes, pktBytes.length, DISCOVERY_ADDR);
 
 		// start thread to send periodic announcements
@@ -106,7 +106,7 @@ class DiscoveryImpl implements Discovery {
 		List<URI> uris =  serviceMap.get(serviceName);
 		long time = System.currentTimeMillis();
 
-		while(System.currentTimeMillis() - time < DISCOVERY_RETRY_TIMEOUT && uris.size() < minEntries){
+		while(uris.size() < minEntries && System.currentTimeMillis() - time < DISCOVERY_RETRY_TIMEOUT){
 			uris = serviceMap.get(serviceName);
 		}
 

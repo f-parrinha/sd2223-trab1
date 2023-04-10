@@ -1,5 +1,6 @@
 package sd2223.trab1.server;
 
+import sd2223.trab1.discovery.Discovery;
 import sd2223.trab1.server.resources.UsersResource;
 import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -9,9 +10,9 @@ import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.logging.Logger;
 
-public class UsersServer {
+public class RESTUsersServer {
 
-	private static Logger Log = Logger.getLogger(UsersServer.class.getName());
+	private static Logger Log = Logger.getLogger(RESTUsersServer.class.getName());
 
 	static {
 		System.setProperty("java.net.preferIPv4Stack", "true");
@@ -23,11 +24,14 @@ public class UsersServer {
 
 	public static void main(String[] args) throws UnknownHostException {
 
+		// Receive arguments
+		String domain = args[0];
+
 		// Use Discovery to announce the uri of this server
 		String ip = InetAddress.getLocalHost().getHostAddress();
 		String serverURI = String.format(SERVER_URI_FMT, ip, PORT);
 		Discovery discovery = Discovery.getInstance();
-		discovery.announce(SERVICE, serverURI);
+		discovery.announce(domain, SERVICE, serverURI);
 
 		try {
 			ResourceConfig config = new ResourceConfig();
