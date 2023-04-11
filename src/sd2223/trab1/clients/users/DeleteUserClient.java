@@ -3,6 +3,7 @@ package sd2223.trab1.clients.users;
 import sd2223.trab1.discovery.Discovery;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.logging.Logger;
 
 /**
@@ -18,8 +19,18 @@ public class DeleteUserClient {
 
     /** Constants */
     private static final Logger LOG = Logger.getLogger(CreateUserClient.class.getName());
+    private static final String SPLITTER = "@";
 
     public static void main(String[] args) throws IOException {
+        // Invalid arguments
+        if( args.length != 2) {
+            System.err.println( "Use: java aula2.clients.DeleteUserClient userId password");
+            System.exit(-2);
+        }
+
+        String name = args[0];
+        String password = args[1];
+
         // Get server URI
         Discovery discovery = Discovery.getInstance();
         var uris = discovery.knownUrisOf("UsersService", 5);
@@ -27,23 +38,21 @@ public class DeleteUserClient {
             LOG.severe("No URIs found.");
             System.exit(-1);
         }
-        URI uri = uris[0];
 
-        // Invalid arguments
-        if( args.length != 2) {
-            System.err.println( "Use: java aula2.clients.DeleteUserClient userId password");
-            System.exit(-2);
+        for (URI uri : uris) {
+            // Run
+            LOG.info("Sending request to server.");
+
+            String url = uri.toString().split(SPLITTER)[0];
+            var result = new RestUsersClient(URI.create(url)).deleteUser(name, password);
+            System.out.println("Result: " + result);
+
+            if (result != null) {
+                // Close
+                System.out.println("Closing...");
+                System.exit(1);
+            }
         }
-
-        // Run
-        String name = args[0];
-        String password = args[1];
-
-        LOG.info("Sending request to server.");
-
-        var result = new RestUsersClient(URI.create(uri.toString())).deleteUser(name, password);
-        System.out.println("Result: " + result);
-
         // Close
         System.out.println("Closing...");
         System.exit(1);

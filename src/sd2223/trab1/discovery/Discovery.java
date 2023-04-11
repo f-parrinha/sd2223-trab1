@@ -43,7 +43,6 @@ public interface Discovery {
  * Implementation of the multicast discovery service
  */
 class DiscoveryImpl implements Discovery {
-	
 	private static Logger Log = Logger.getLogger(Discovery.class.getName());
 
 	// The pre-aggreed multicast endpoint assigned to perform discovery.
@@ -128,10 +127,11 @@ class DiscoveryImpl implements Discovery {
 						var msg = new String(pkt.getData(), 0, pkt.getLength());
 						//Log.info(String.format("Received: %s", msg));
 
-						var parts = msg.split(DELIMITER);
+						var parts = msg.split("[:\\\t]");
 						if (parts.length == 2) {
-							var serviceName = parts[0];
-							var uri = URI.create(parts[1]);
+							var domain = parts[0];
+							var serviceName = parts[1];
+							var uri = URI.create(parts[2]+"@"+domain);
 
 							serviceMap.put(serviceName, uri);
 						}

@@ -5,6 +5,7 @@ import sd2223.trab1.discovery.Discovery;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.logging.Logger;
 
 /**
@@ -20,32 +21,32 @@ public class CreateUserClient {
 
 	/** Constants */
 	private static final Logger LOG = Logger.getLogger(CreateUserClient.class.getName());
+	private static final String SPLITTER = "@";
 
 	public static void main(String[] args) throws IOException {
-		// Get server URI
-		var uris = Discovery.getInstance().knownUrisOf("UsersService", 5);
-		if(uris.length == 0) {
-			LOG.severe("No URIs found.");
-			System.exit(-1);
-		}
-		URI uri = uris[0];
-
 		// Invalid arguments
 		if (args.length != 4) {
 			System.err.println("Use: java aula3.clients.CreateUserClient name pwd domain displayName");
 			System.exit(-2);
 		}
 
-		// Run
 		String name = args[0];
 		String pwd = args[1];
 		String domain = args[2];
 		String displayName = args[3];
-
 		User u = new User(name, pwd, domain, displayName);
 
+		// Get server URI
+		var uris = Discovery.getInstance().knownUrisOf("UsersService", 5);
+		if(uris.length == 0) {
+			LOG.severe("No URIs found.");
+			System.exit(-1);
+		}
+		String url = Arrays.stream(uris).toList().stream().filter(uri -> uri.toString().split(SPLITTER)[1].equals(domain)).toString().split(SPLITTER)[0];
+
+		// Run
 		LOG.info("Sending request to server.");
-		var result = new RestUsersClient(URI.create(uri.toString())).createUser(u);
+		var result = new RestUsersClient(URI.create(url)).createUser(u);
 		System.out.println("Result: " + result);
 
 		// Close

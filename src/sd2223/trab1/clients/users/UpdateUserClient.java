@@ -19,8 +19,21 @@ public class UpdateUserClient {
 
     /** Constants */
     private static final Logger LOG = Logger.getLogger(CreateUserClient.class.getName());
+    private static final String SPLITTER = "@";
 
     public static void main(String[] args) throws IOException {
+        // Invalid arguments
+        if (args.length != 5) {
+            System.err.println("Use: java aula2.clients.UpdateUserClient name oldPassword newDisplayName newDomain newPassword");
+            System.exit(-2);
+        }
+        String name = args[0];
+        String oldPassword = args[1];
+        String newDisplayName = args[2];
+        String newDomain = args[3];
+        String newPassword = args[4];
+        var u = new User(name, newPassword, newDomain, newDisplayName);
+
         // Get server URI
         Discovery discovery = Discovery.getInstance();
         var uris = discovery.knownUrisOf("UsersService", 5);
@@ -28,25 +41,22 @@ public class UpdateUserClient {
             LOG.severe("No URIs found.");
             System.exit(-1);
         }
-        URI uri = uris[0];
-
-        // Invalid arguments
-        if (args.length != 5) {
-            System.err.println("Use: java aula2.clients.UpdateUserClient name oldPassword newDisplayName newDomain newPassword");
-            System.exit(-2);
-        }
 
         // Run
-        String name = args[0];
-        String oldPassword = args[1];
-        String newDisplayName = args[2];
-        String newDomain = args[3];
-        String newPassword = args[4];
+        for (URI uri : uris) {
+            // Run
+            LOG.info("Sending request to server.");
 
-        var u = new User(name, newPassword, newDomain, newDisplayName);
+            String url = uri.toString().split(SPLITTER)[0];
+            var result = new RestUsersClient(URI.create(url)).updateUser(name, oldPassword, u);
+            System.out.println("Success: " + result);
 
-        var result = new RestUsersClient(URI.create(uri.toString())).updateUser(name, oldPassword, u);
-        System.out.println("Success : " + result);
+            if (result != null) {
+                // Close
+                System.out.println("Closing...");
+                System.exit(1);
+            }
+        }
 
         // Close
         System.out.println("Closing...");

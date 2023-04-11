@@ -19,8 +19,16 @@ public class SearchUsersClient {
 
 	/** Constants */
 	private static final Logger LOG = Logger.getLogger(CreateUserClient.class.getName());
+	private static final String SPLITTER = "@";
 
 	public static void main(String[] args) throws IOException {
+		// Invalid arguments
+		if (args.length != 1) {
+			System.err.println("Use: java aula3.clients.SearchUsersClient userId ");
+			System.exit(-2);
+		}
+		String userId = args[0];
+
 		// Get server URI
 		Discovery discovery = Discovery.getInstance();
 		var uris = discovery.knownUrisOf("UsersService", 5);
@@ -28,21 +36,23 @@ public class SearchUsersClient {
 			LOG.severe("No URIs found.");
 			System.exit(-1);
 		}
-		URI uri = uris[0];
-
-		// Invalid arguments
-		if (args.length != 1) {
-			System.err.println("Use: java aula3.clients.SearchUsersClient userId ");
-			System.exit(-2);
-		}
 
 		// Run
-		String userId = args[0];
+		for (URI uri : uris) {
+			// Run
+			LOG.info("Sending request to server.");
 
-		System.out.println("Sending request to server.");
-		var result = new RestUsersClient(URI.create(uri.toString())).searchUsers(userId);
-		System.out.println("Success: (" + result.size() + " users)");
-		result.forEach(System.out::println);
+			String url = uri.toString().split(SPLITTER)[0];
+			var result = new RestUsersClient(URI.create(url)).searchUsers(userId);
+			System.out.println("Success: (" + result.size() + " users)");
+			result.forEach(System.out::println);
+
+			if (result != null) {
+				// Close
+				System.out.println("Closing...");
+				System.exit(1);
+			}
+		}
 
 		// Close
 		System.out.println("Closing...");
