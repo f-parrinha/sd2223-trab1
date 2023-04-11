@@ -1,9 +1,9 @@
 package sd2223.trab1.clients.users;
 
+import sd2223.trab1.clients.RestUsersClient;
 import sd2223.trab1.discovery.Discovery;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.logging.Logger;
 
 /**

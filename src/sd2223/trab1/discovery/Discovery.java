@@ -30,6 +30,7 @@ public interface Discovery {
 	 */
 	public URI[] knownUrisOf(String serviceName, int minReplies);
 
+
 	/**
 	 * Get the instance of the Discovery service
 	 * @return the singleton instance of the Discovery service

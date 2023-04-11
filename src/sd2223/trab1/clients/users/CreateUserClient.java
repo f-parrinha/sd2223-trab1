@@ -1,6 +1,7 @@
 package sd2223.trab1.clients.users;
 
 import sd2223.trab1.api.User;
+import sd2223.trab1.clients.RestUsersClient;
 import sd2223.trab1.discovery.Discovery;
 
 import java.io.IOException;

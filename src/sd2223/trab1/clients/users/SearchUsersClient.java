@@ -1,5 +1,6 @@
 package sd2223.trab1.clients.users;
 
+import sd2223.trab1.clients.RestUsersClient;
 import sd2223.trab1.discovery.Discovery;
 
 import java.io.IOException;
@@ -47,11 +48,9 @@ public class SearchUsersClient {
 			System.out.println("Success: (" + result.size() + " users)");
 			result.forEach(System.out::println);
 
-			if (result != null) {
-				// Close
-				System.out.println("Closing...");
-				System.exit(1);
-			}
+			// Close
+			System.out.println("Closing...");
+			System.exit(1);
 		}
 
 		// Close

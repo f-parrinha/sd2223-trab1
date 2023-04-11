@@ -1,4 +1,4 @@
-package sd2223.trab1.clients.users;
+package sd2223.trab1.clients;
 
 import sd2223.trab1.api.User;
 import sd2223.trab1.api.rest.UsersService;
@@ -24,7 +24,7 @@ public class RestUsersClient extends RestClient implements UsersService {
 	private final WebTarget target;
 
 	/** Constructor */
-	RestUsersClient(URI serverURI) {
+	public RestUsersClient(URI serverURI) {
 		super(serverURI);
 		target = client.target(serverURI).path(UsersService.PATH);
 	}
