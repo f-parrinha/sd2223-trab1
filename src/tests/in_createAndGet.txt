@@ -1,40 +1,40 @@
 # TEST 0 - no arguments in createUserClient
-java -cp sd2223.jar sd2223.trab1.clients.CreateUserClient
+java -cp sd2223.jar sd2223.trab1.clients.users.CreateUserClient
 
 # TEST 1 - invalid argument number in createUserClient
-java -cp sd2223.jar sd2223.trab1.clients.CreateUserClient nmp 12345 nova
+java -cp sd2223.jar sd2223.trab1.clients.users.CreateUserClient nmp 12345 nova
 
 # TEST 2 - user already exists
-java -cp sd2223.jar sd2223.trab1.clients.CreateUserClient nmp 12345 nova "Nuno Preguica"
-java -cp sd2223.jar sd2223.trab1.clients.CreateUserClient nmp 12345 nova "Nuno Preguica"
+java -cp sd2223.jar sd2223.trab1.clients.users.CreateUserClient nmp 12345 nova "Nuno Preguica"
+java -cp sd2223.jar sd2223.trab1.clients.users.CreateUserClient nmp 12345 nova "Nuno Preguica"
 
 # TEST 3 - no arguments in getUserClient
-java -cp sd2223.jar sd2223.trab1.clients.CreateUserClient nmp 12345 nova "Nuno Preguica"
-java -cp sd2223.jar sd2223.trab1.clients.GetUserClient
+java -cp sd2223.jar sd2223.trab1.clients.users.CreateUserClient nmp 12345 nova "Nuno Preguica"
+java -cp sd2223.jar sd2223.trab1.clients.users.GetUserClient
 
 # TEST 4 - invalid argument number in getUserClient
-java -cp sd2223.jar sd2223.trab1.clients.CreateUserClient nmp 12345 nova "Nuno Preguica"
-java -cp sd2223.jar sd2223.trab1.clients.GetUserClient nmp
+java -cp sd2223.jar sd2223.trab1.clients.users.CreateUserClient nmp 12345 nova "Nuno Preguica"
+java -cp sd2223.jar sd2223.trab1.clients.users.GetUserClient nmp
 
 # TEST 5 - incorrect password
-java -cp sd2223.jar sd2223.trab1.clients.CreateUserClient nmp 12345 nova "Nuno Preguica"
-java -cp sd2223.jar sd2223.trab1.clients.GetUserClient nmp 123
+java -cp sd2223.jar sd2223.trab1.clients.users.CreateUserClient nmp 12345 nova "Nuno Preguica"
+java -cp sd2223.jar sd2223.trab1.clients.users.GetUserClient nmp 123
 
 # TEST 6 - user not found
-java -cp sd2223.jar sd2223.trab1.clients.CreateUserClient nmp 12345 nova "Nuno Preguica"
-java -cp sd2223.jar sd2223.trab1.clients.GetUserClient n 12345
+java -cp sd2223.jar sd2223.trab1.clients.users.CreateUserClient nmp 12345 nova "Nuno Preguica"
+java -cp sd2223.jar sd2223.trab1.clients.users.GetUserClient n 12345
 
 # TEST 7 - success
-java -cp sd2223.jar sd2223.trab1.clients.CreateUserClient nmp 12345 nova "Nuno Preguica"
-java -cp sd2223.jar sd2223.trab1.clients.GetUserClient nmp 12345
+java -cp sd2223.jar sd2223.trab1.clients.users.CreateUserClient nmp 12345 nova "Nuno Preguica"
+java -cp sd2223.jar sd2223.trab1.clients.users.GetUserClient nmp 12345
 
 # TEST ALL
-java -cp sd2223.jar sd2223.trab1.clients.CreateUserClient
-java -cp sd2223.jar sd2223.trab1.clients.CreateUserClient nmp 12345 nova
-java -cp sd2223.jar sd2223.trab1.clients.CreateUserClient nmp 12345 nova "Nuno Preguica"
-java -cp sd2223.jar sd2223.trab1.clients.CreateUserClient nmp 12345 nova "Nuno Preguica"
-java -cp sd2223.jar sd2223.trab1.clients.GetUserClient
-java -cp sd2223.jar sd2223.trab1.clients.GetUserClient nmp
-java -cp sd2223.jar sd2223.trab1.clients.GetUserClient nmp 123
-java -cp sd2223.jar sd2223.trab1.clients.GetUserClient n 12345
-java -cp sd2223.jar sd2223.trab1.clients.GetUserClient nmp 12345
+java -cp sd2223.jar sd2223.trab1.clients.users.CreateUserClient
+java -cp sd2223.jar sd2223.trab1.clients.users.CreateUserClient nmp 12345 nova
+java -cp sd2223.jar sd2223.trab1.clients.users.CreateUserClient nmp 12345 nova "Nuno Preguica"
+java -cp sd2223.jar sd2223.trab1.clients.users.CreateUserClient nmp 12345 nova "Nuno Preguica"
+java -cp sd2223.jar sd2223.trab1.clients.users.GetUserClient
+java -cp sd2223.jar sd2223.trab1.clients.users.GetUserClient nmp
+java -cp sd2223.jar sd2223.trab1.clients.users.GetUserClient nmp 123
+java -cp sd2223.jar sd2223.trab1.clients.users.GetUserClient n 12345
+java -cp sd2223.jar sd2223.trab1.clients.users.GetUserClient nmp 12345

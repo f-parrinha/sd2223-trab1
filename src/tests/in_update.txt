@@ -1,31 +1,31 @@
 # TEST UPDATE 0 - no arguments
-java -cp sd2223.jar sd2223.trab1.clients.CreateUserClient nmp 12345 nova "Nuno Preguica"
-java -cp sd2223.jar sd2223.trab1.clients.UpdateUserClient
+java -cp sd2223.jar sd2223.trab1.clients.users.CreateUserClient nmp 12345 nova "Nuno Preguica"
+java -cp sd2223.jar sd2223.trab1.clients.users.UpdateUserClient
 
 # TEST UPDATE 1 - invalid argument number
-java -cp sd2223.jar sd2223.trab1.clients.CreateUserClient nmp 12345 nova "Nuno Preguica"
-java -cp sd2223.jar sd2223.trab1.clients.UpdateUserClient nmp 12345 "Francisco Parrinha" novaStudent
+java -cp sd2223.jar sd2223.trab1.clients.users.CreateUserClient nmp 12345 nova "Nuno Preguica"
+java -cp sd2223.jar sd2223.trab1.clients.users.UpdateUserClient nmp 12345 "Francisco Parrinha" novaStudent
 
 # TEST UPDATE 2 - user does not exist
-java -cp sd2223.jar sd2223.trab1.clients.CreateUserClient nmp 12345 nova "Nuno Preguica"
-java -cp sd2223.jar sd2223.trab1.clients.UpdateUserClient nmp 12345 "Francisco Parrinha" novaStudent 54321
-java -cp sd2223.jar sd2223.trab1.clients.GetUserClient erro 54321
+java -cp sd2223.jar sd2223.trab1.clients.users.CreateUserClient nmp 12345 nova "Nuno Preguica"
+java -cp sd2223.jar sd2223.trab1.clients.users.UpdateUserClient nmp 12345 "Francisco Parrinha" novaStudent 54321
+java -cp sd2223.jar sd2223.trab1.clients.users.GetUserClient erro 54321
 
 # TEST UPDATE 3 - test incorrect password
-java -cp sd2223.jar sd2223.trab1.clients.CreateUserClient nmp 12345 nova "Nuno Preguica"
-java -cp sd2223.jar sd2223.trab1.clients.UpdateUserClient nmp 12345 "Francisco Parrinha" novaStudent 54321
-java -cp sd2223.jar sd2223.trab1.clients.GetUserClient nmp erro
+java -cp sd2223.jar sd2223.trab1.clients.users.CreateUserClient nmp 12345 nova "Nuno Preguica"
+java -cp sd2223.jar sd2223.trab1.clients.users.UpdateUserClient nmp 12345 "Francisco Parrinha" novaStudent 54321
+java -cp sd2223.jar sd2223.trab1.clients.users.GetUserClient nmp erro
 
 # TEST UPDATE 4 - success
-java -cp sd2223.jar sd2223.trab1.clients.CreateUserClient nmp 12345 nova "Nuno Preguica"
-java -cp sd2223.jar sd2223.trab1.clients.UpdateUserClient nmp 12345 "Francisco Parrinha" novaStudent 54321
-java -cp sd2223.jar sd2223.trab1.clients.GetUserClient nmp 54321
+java -cp sd2223.jar sd2223.trab1.clients.users.CreateUserClient nmp 12345 nova "Nuno Preguica"
+java -cp sd2223.jar sd2223.trab1.clients.users.UpdateUserClient nmp 12345 "Francisco Parrinha" novaStudent 54321
+java -cp sd2223.jar sd2223.trab1.clients.users.GetUserClient nmp 54321
 
 # TEST UPDATE - ALL
-java -cp sd2223.jar sd2223.trab1.clients.CreateUserClient nmp 12345 nova "Nuno Preguica"
-java -cp sd2223.jar sd2223.trab1.clients.UpdateUserClient
-java -cp sd2223.jar sd2223.trab1.clients.UpdateUserClient nmp 12345 "Francisco Parrinha" novaStudent
-java -cp sd2223.jar sd2223.trab1.clients.UpdateUserClient nmp 12345 "Francisco Parrinha" novaStudent 54321
-java -cp sd2223.jar sd2223.trab1.clients.GetUserClient erro 54321
-java -cp sd2223.jar sd2223.trab1.clients.GetUserClient nmp 12345
-java -cp sd2223.jar sd2223.trab1.clients.GetUserClient nmp 54321
+java -cp sd2223.jar sd2223.trab1.clients.users.CreateUserClient nmp 12345 nova "Nuno Preguica"
+java -cp sd2223.jar sd2223.trab1.clients.users.UpdateUserClient
+java -cp sd2223.jar sd2223.trab1.clients.users.UpdateUserClient nmp 12345 "Francisco Parrinha" novaStudent
+java -cp sd2223.jar sd2223.trab1.clients.users.UpdateUserClient nmp 12345 "Francisco Parrinha" novaStudent 54321
+java -cp sd2223.jar sd2223.trab1.clients.users.GetUserClient erro 54321
+java -cp sd2223.jar sd2223.trab1.clients.users.GetUserClient nmp 12345
+java -cp sd2223.jar sd2223.trab1.clients.users.GetUserClient nmp 54321

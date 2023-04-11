@@ -1,4 +1,4 @@
-package sd2223.trab1.clients;
+package sd2223.trab1.clients.users;
 
 import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.client.Client;
