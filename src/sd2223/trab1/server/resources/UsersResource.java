@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 /**
@@ -21,10 +22,11 @@ import java.util.logging.Logger;
 public class UsersResource implements UsersService {
 
 	/** Constants */
+	private static final String DOMAIN = "@%s";
 	private static final Logger LOG = Logger.getLogger(UsersResource.class.getName());
 
 	/** Variables */
-	private final Map<String,User> users = new HashMap<>();
+	private final ConcurrentHashMap<String,User> users = new ConcurrentHashMap<>();
 
 	/** Constructor */
 	public UsersResource() {
@@ -46,7 +48,7 @@ public class UsersResource implements UsersService {
 			throw new WebApplicationException( Status.CONFLICT );
 		}
 
-		return user.getName();
+		return user.getName() + String.format(DOMAIN, user.getDomain());
 	}
 	
 	@Override
@@ -58,9 +60,9 @@ public class UsersResource implements UsersService {
 				LOG.info("Name or Password null.");
 				throw new WebApplicationException( Status.BAD_REQUEST );
 			}
-			
-			User user = users.get(name);			
-			// Check if user exists 
+
+			// Check if user exists
+			User user = users.get(name);
 			if( user == null ) {
 				LOG.info("User does not exist.");
 				throw new WebApplicationException( Status.NOT_FOUND );
@@ -79,9 +81,14 @@ public class UsersResource implements UsersService {
 	public User updateUser(String name, String pwd, User user) {
 		LOG.info("updateUser : user = " + name + "; pwd = " + pwd + " ; user = " + user);
 
-		User _user = users.get(name);
+		// Check if user is valid
+		if(name == null || pwd == null || !name.equals(user.getName())) {
+			LOG.info("Name or Password null or name and new name are different .");
+			throw new WebApplicationException( Status.BAD_REQUEST );
+		}
 
 		// Check if there is a user
+		User _user = users.get(name);
 		if (_user == null){
 			LOG.info("User does not exist.");
 			throw new WebApplicationException(Status.NOT_FOUND);
@@ -139,6 +146,11 @@ public class UsersResource implements UsersService {
 	public List<User> searchUsers(String pattern) {
 		LOG.info("searchUsers : pattern = " + pattern);
 
+		if(pattern == null) {
+			LOG.info("Pattern is null");
+			throw new WebApplicationException( Status.BAD_REQUEST );
+		}
+
 		return getPublicUsers(pattern);
 	}
 
@@ -151,8 +163,11 @@ public class UsersResource implements UsersService {
 		List<User> result = new LinkedList<>();
 
 		for (User user : users.values()){
-			if(user.getPwd().equals("") && (pattern.equals("") || user.getDisplayName().contains(pattern))){
-				result.add(user);
+			String userName = user.getName().toLowerCase();
+			String patt = pattern.toLowerCase();
+			if(pattern.equals("") || userName.contains(patt)){
+				User newUser = new User(user.getName(), "", user.getDomain(), user.getDisplayName());
+				result.add(newUser);
 			}
 		}
 

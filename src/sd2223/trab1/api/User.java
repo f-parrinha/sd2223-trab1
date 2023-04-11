@@ -4,8 +4,6 @@ package sd2223.trab1.api;
  * returned in any method.
  */
 public class User {
-	/** Constants */
-	private static final String DOMAIN = "@%s";
 
 	/** Variables */
 	private String name;
@@ -28,7 +26,7 @@ public class User {
 	}
 
 	public String getName() {
-		return name+String.format(DOMAIN, domain);
+		return name;
 	}
 
 	public void setName(String name) {
