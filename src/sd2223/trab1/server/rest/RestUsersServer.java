@@ -1,13 +1,7 @@
 package sd2223.trab1.server.rest;
 
-import java.net.InetAddress;
-import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.logging.Logger;
-
-import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
-import org.glassfish.jersey.server.ResourceConfig;
-import sd2223.trab1.server.resources.UsersResource;
 
 public class RestUsersServer extends RestServer{
 	public static final int PORT = 8080;

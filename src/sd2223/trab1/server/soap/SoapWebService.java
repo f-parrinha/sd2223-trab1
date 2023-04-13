@@ -22,6 +22,4 @@ public abstract class SoapWebService<E extends Throwable> {
 		else
 			throw exceptionMapper.apply(result);
 	}
-
-	public abstract void verifyPassword(String name, String pwd) throws Throwable;
 }

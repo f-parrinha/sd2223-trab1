@@ -8,6 +8,7 @@ import sd2223.trab1.api.java.Result.ErrorCode;
 import sd2223.trab1.api.java.Users;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -94,20 +95,54 @@ public class JavaUsers implements Users {
 
 	@Override
 	public Result<User> deleteUser(String name, String pwd) {
-		return Result.error( ErrorCode.NOT_IMPLEMENTED);
+		// Check if user is valid
+		if(name == null || pwd == null) {
+			throw new WebApplicationException( Response.Status.BAD_REQUEST );
+		}
+
+		var user = users.get(name);
+
+		// Check if user exists
+		if( user == null ) {
+			throw new WebApplicationException( Response.Status.NOT_FOUND );
+		}
+
+		//Check if the password is correct
+		if( !user.getPwd().equals( pwd)) {
+			throw new WebApplicationException( Response.Status.FORBIDDEN );
+		}
+
+		users.remove(user.getName());
+
+		return Result.ok(user);
 	}
 
 	@Override
 	public Result<List<User>> searchUsers(String pattern) {
-		return Result.error( ErrorCode.NOT_IMPLEMENTED);
+		if(pattern == null) {
+			throw new WebApplicationException( Response.Status.BAD_REQUEST );
+		}
+
+		return Result.ok(getPublicUsers(pattern));
 	}
 
-	@Override
-	public Result<Void> verifyPassword(String name, String pwd) {
-		var res = getUser(name, pwd);
-		if( res.isOK() )
-			return Result.ok();
-		else
-			return Result.error( res.error() );
+	/**
+	 * Gets all public users
+	 *
+	 * @return list of public users
+	 */
+	private List<User> getPublicUsers(String pattern){
+		List<User> result = new LinkedList<>();
+
+		for (User user : users.values()){
+			String userName = user.getName().toLowerCase();
+			String patt = pattern.toLowerCase();
+			if(pattern.equals("") || userName.contains(patt)){
+				User newUser = new User(user.getName(), "", user.getDomain(), user.getDisplayName());
+				result.add(newUser);
+			}
+		}
+
+		return result;
 	}
 }

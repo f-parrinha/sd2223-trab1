@@ -12,7 +12,7 @@ import sd2223.trab1.server.java.JavaUsers;
 import jakarta.jws.WebService;
 
 @WebService(serviceName=UsersService.NAME, targetNamespace=UsersService.NAMESPACE, endpointInterface=UsersService.INTERFACE)
-public class SoapUsersWebService extends SoapWebService implements UsersService {
+public class SoapUsersWebService extends SoapWebService<UsersException> implements UsersService {
 
 	static Logger Log = Logger.getLogger(SoapUsersWebService.class.getName());
 	
@@ -32,12 +32,6 @@ public class SoapUsersWebService extends SoapWebService implements UsersService 
 		return super.fromJavaResult( impl.getUser(name, pwd));
 	}
 
-
-	@Override
-	public void verifyPassword(String name, String pwd) throws Throwable {
-		super.fromJavaResult( impl.verifyPassword(name, pwd));
-	}
-	
 	@Override
 	public void updateUser(String name, String pwd, User user) throws UsersException {
 		throw new RuntimeException("Not Implemented...");

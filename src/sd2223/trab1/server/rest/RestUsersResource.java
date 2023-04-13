@@ -18,7 +18,7 @@ public class RestUsersResource extends RestResource implements UsersService {
 	
 	@Override
 	public String createUser(User user) {
-		
+
 		return super.fromJavaResult( impl.createUser( user));
 	}
 
@@ -26,25 +26,20 @@ public class RestUsersResource extends RestResource implements UsersService {
 	public User getUser(String name, String pwd) {
 		return super.fromJavaResult( impl.getUser(name, pwd));
 	}
-
-	@Override
-	public void verifyPassword(String name, String pwd) {
-		super.fromJavaResult( impl.verifyPassword(name, pwd));
-	}
 	
 	@Override
 	public User updateUser(String name, String pwd, User user) {
-		throw new RuntimeException("Not Implemented...");
+		return super.fromJavaResult(impl.updateUser(name, pwd, user));
 	}
 
 	@Override
 	public User deleteUser(String name, String pwd) {
-		throw new RuntimeException("Not Implemented...");
+		return super.fromJavaResult(impl.deleteUser(name, pwd));
 	}
 
 	@Override
 	public List<User> searchUsers(String pattern) {
-		throw new RuntimeException("Not Implemented...");
+		return super.fromJavaResult(impl.searchUsers(pattern));
 	}
 
 		

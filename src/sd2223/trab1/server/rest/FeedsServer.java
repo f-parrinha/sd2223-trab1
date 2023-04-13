@@ -1,7 +1,6 @@
 package sd2223.trab1.server.rest;
 
 import sd2223.trab1.server.resources.FeedsResource;
-import sd2223.trab1.server.resources.UsersResource;
 
 import java.net.UnknownHostException;
 import java.util.logging.Logger;

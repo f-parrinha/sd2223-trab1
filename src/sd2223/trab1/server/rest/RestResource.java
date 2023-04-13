@@ -41,6 +41,4 @@ public abstract class RestResource {
 			return Status.INTERNAL_SERVER_ERROR;
 		}
 	}
-
-	public abstract void verifyPassword(String name, String pwd);
 }

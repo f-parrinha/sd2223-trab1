@@ -38,11 +38,6 @@ public class SoapUsersClient extends SoapClient implements Users {
 	public Result<User> getUser(String name, String pwd) {
 		return super.reTry( () -> super.toJavaResult( () -> stub().getUser(name, pwd) ) );
 	}
-
-	@Override
-	public Result<Void> verifyPassword(String name, String pwd) {
-		return super.reTry( () -> super.toJavaResult( () -> stub().verifyPassword(name, pwd) ) );
-	}
 	
 	@Override
 	public Result<User> updateUser(String name, String pwd, User user) {

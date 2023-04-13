@@ -14,7 +14,5 @@ public interface Users {
 	
 	Result<User> deleteUser(String name, String pwd);
 	
-	Result<List<User>> searchUsers(String pattern);	
-	
-	Result<Void> verifyPassword( String name, String pwd);
+	Result<List<User>> searchUsers(String pattern);
 }
