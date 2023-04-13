@@ -4,7 +4,7 @@ import sd2223.trab1.api.java.Result;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response.Status;
 
-public class RestResource {
+public abstract class RestResource {
 
 	/**
 	 * Given a Result<T>, either returns the value, or throws the JAX-WS Exception
@@ -42,4 +42,5 @@ public class RestResource {
 		}
 	}
 
+	public abstract void verifyPassword(String name, String pwd);
 }

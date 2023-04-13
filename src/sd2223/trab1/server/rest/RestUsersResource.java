@@ -18,6 +18,7 @@ public class RestUsersResource extends RestResource implements UsersService {
 	
 	@Override
 	public String createUser(User user) {
+		
 		return super.fromJavaResult( impl.createUser( user));
 	}
 

@@ -1,8 +1,8 @@
-package aula5.servers.soap;
+package sd2223.trab1.server.soap;
 
 import java.util.function.Function;
 
-import aula5.api.java.Result;
+import sd2223.trab1.api.java.Result;
 
 public abstract class SoapWebService<E extends Throwable> {
 
@@ -22,4 +22,6 @@ public abstract class SoapWebService<E extends Throwable> {
 		else
 			throw exceptionMapper.apply(result);
 	}
+
+	public abstract void verifyPassword(String name, String pwd) throws Throwable;
 }

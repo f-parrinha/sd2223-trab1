@@ -1,5 +1,7 @@
 package sd2223.trab1.server.java;
 
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
 import sd2223.trab1.api.User;
 import sd2223.trab1.api.java.Result;
 import sd2223.trab1.api.java.Result.ErrorCode;
@@ -61,7 +63,33 @@ public class JavaUsers implements Users {
 
 	@Override
 	public Result<User> updateUser(String name, String pwd, User user) {
-		return Result.error( ErrorCode.NOT_IMPLEMENTED);
+		// Check if user is valid
+		if(name == null || pwd == null || !name.equals(user.getName())) {
+			throw new WebApplicationException( Response.Status.BAD_REQUEST );
+		}
+
+		// Check if there is a user
+		User _user = users.get(name);
+		if (_user == null){
+			throw new WebApplicationException(Response.Status.NOT_FOUND);
+		}
+
+		// Check if the password is correct
+		if (!_user.getPwd().equals(pwd)){
+			throw new WebApplicationException(Response.Status.FORBIDDEN);
+		}
+
+		// update user info
+		String newName = user.getDisplayName();
+		String newDomain = user.getDomain();
+		String newPassword = user.getPwd();
+
+		_user.setDisplayName(newName == null ? _user.getDisplayName() : newName);
+		_user.setDomain(newDomain == null ? _user.getDomain() : newDomain);
+		_user.setPwd(newPassword == null ? _user.getPwd() : newPassword);
+		users.put(name , _user);
+
+		return Result.ok( _user );
 	}
 
 	@Override

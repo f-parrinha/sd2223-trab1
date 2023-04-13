@@ -1,7 +1,7 @@
 package sd2223.trab1.clients.soap;
 
-import aula5.api.java.Result;
-import aula5.api.java.Result.ErrorCode;
+import sd2223.trab1.api.java.Result;
+import sd2223.trab1.api.java.Result.ErrorCode;
 import com.sun.xml.ws.client.BindingProviderProperties;
 import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.WebServiceException;
@@ -11,8 +11,8 @@ import java.net.URI;
 import java.net.URL;
 import java.util.logging.Logger;
 
-import static aula5.api.java.Result.error;
-import static aula5.api.java.Result.ok;
+import static sd2223.trab1.api.java.Result.error;
+import static sd2223.trab1.api.java.Result.ok;
 
 /**
 * 

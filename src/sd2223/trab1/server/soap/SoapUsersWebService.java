@@ -1,18 +1,18 @@
-package aula5.servers.soap;
+package sd2223.trab1.server.soap;
 
 
 import java.util.List;
 import java.util.logging.Logger;
 
-import aula5.api.User;
-import aula5.api.java.Users;
-import aula5.api.soap.UsersException;
-import aula5.api.soap.UsersService;
-import aula5.servers.java.JavaUsers;
+import sd2223.trab1.api.User;
+import sd2223.trab1.api.java.Users;
+import sd2223.trab1.api.soap.UsersException;
+import sd2223.trab1.api.soap.UsersService;
+import sd2223.trab1.server.java.JavaUsers;
 import jakarta.jws.WebService;
 
 @WebService(serviceName=UsersService.NAME, targetNamespace=UsersService.NAMESPACE, endpointInterface=UsersService.INTERFACE)
-public class SoapUsersWebService extends SoapWebService<UsersException> implements UsersService {
+public class SoapUsersWebService extends SoapWebService implements UsersService {
 
 	static Logger Log = Logger.getLogger(SoapUsersWebService.class.getName());
 	
@@ -34,7 +34,7 @@ public class SoapUsersWebService extends SoapWebService<UsersException> implemen
 
 
 	@Override
-	public void verifyPassword(String name, String pwd) throws UsersException {
+	public void verifyPassword(String name, String pwd) throws Throwable {
 		super.fromJavaResult( impl.verifyPassword(name, pwd));
 	}
 	

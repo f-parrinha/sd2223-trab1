@@ -1,6 +1,7 @@
 package sd2223.trab1.clients;
 
-import aula5.api.java.Users;
+import sd2223.trab1.api.java.Users;
+import sd2223.trab1.clients.rest.RestUsersClient;
 import sd2223.trab1.clients.soap.SoapUsersClient;
 
 import java.net.URI;
