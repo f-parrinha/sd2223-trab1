@@ -57,11 +57,6 @@ public class RestUsersClient extends RestClient implements Users {
 	public Result<User> getUser(String name, String pwd) {
 		return super.reTry(() -> clt_getUser(name, pwd));
 	}
-	
-	@Override
-	public Result<Void> verifyPassword(String name, String pwd) {
-		return super.reTry(() -> clt_verifyPassword(name, pwd));
-	}
 
 	@Override
 	public Result<User> updateUser(String userId, String password, User user) {
