@@ -171,9 +171,9 @@ public class JavaFeeds implements Feeds {
         LOG.info("listSubs from user: " + user);
 
         // Check if user data is valid
-        if(user == null) {
-            LOG.info("Name null.");
-            return Result.error(Result.ErrorCode.BAD_REQUEST);
+        var result = requestUser(user, "");
+        if (!result.isOK() && result.error().equals(Result.ErrorCode.NOT_FOUND)) {
+            return Result.error(result.error());
         }
 
         Feed feed = feeds.get(user);
