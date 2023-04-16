@@ -1,5 +1,6 @@
 package sd2223.trab1.api;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -117,12 +118,14 @@ public class Feed {
     }
 
     /**
-     * Returns feed's messages
+     * Returns feed's messages newer than the given time
+     * @param time oldest time
      * @return messages
      */
-    public List<Message> getMessages() {
-        return messages;
+    public List<Message> getMessages(long time) {
+        return time == 0 ? messages : messages.stream().filter(m -> m.getCreationTime() > time).toList();
     }
+
 
     /**
      * Returns feed's followers

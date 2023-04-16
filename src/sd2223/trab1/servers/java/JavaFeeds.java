@@ -119,7 +119,7 @@ public class JavaFeeds implements Feeds {
         Feed feed = feeds.get(user);
         feeds.put(user, feed == null ? feed = new Feed() : feed);
 
-        return Result.ok(feed.getMessages());
+        return Result.ok(feed.getMessages(time));
     }
 
     @Override
