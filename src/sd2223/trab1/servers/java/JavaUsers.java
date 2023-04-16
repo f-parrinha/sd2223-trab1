@@ -10,12 +10,20 @@ import sd2223.trab1.api.User;
 import sd2223.trab1.api.java.Result;
 import sd2223.trab1.api.java.Result.ErrorCode;
 import sd2223.trab1.api.java.Users;
-import sd2223.trab1.clients.UsersClientFactory;
 
+/**
+ * Class JavaUsers - Handles users resource
+ *
+ * @author Francisco Parrinha   58360
+ * @author Martin Magdalinchev  58172
+ */
 public class JavaUsers implements Users {
-	private final Map<String,User> users = new HashMap<>();
 
+	/** Constants */
 	private static final Logger LOG = Logger.getLogger(JavaUsers.class.getName());
+
+	/** Variables */
+	private final Map<String,User> users = new HashMap<>();
 
 	@Override
 	public Result<String> createUser(User user) {

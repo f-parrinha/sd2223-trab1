@@ -1,6 +1,6 @@
 USERS_REST_SERVER_MAINCLASS=sd2223.trab1.servers.rest.RestUsersServer
 USERS_REST_PORT=8080
-USERS_SOAP_SERVER_MAINCLASS=sd2223.trab1.clients.soap.SoapUsersClient
+USERS_SOAP_SERVER_MAINCLASS=sd2223.trab1.clients.soap.SoapUsersServer
 USERS_SOAP_PORT=
 USERS_EXTRA_ARGS=ourorg-0
 FEEDS_REST_SERVER_MAINCLASS=sd2223.trab1.servers.rest.RestFeedsServer

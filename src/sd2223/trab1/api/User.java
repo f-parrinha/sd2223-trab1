@@ -14,16 +14,11 @@ public class User {
 	private String displayName;
 	private String domain;
 
-	private BlockingDeque<String> followers;
-	private BlockingDeque<String> subscribers;
-
 	public User() {
 		this.pwd = null;
 		this.name = null;
 		this.domain = null;
 		this.displayName = null;
-		this.subscribers = new LinkedBlockingDeque<>();
-		this.followers = new LinkedBlockingDeque<>();
 	}
 
 	public User(String name, String pwd, String domain, String displayName) {
@@ -31,8 +26,6 @@ public class User {
 		this.name = name;
 		this.domain = domain;
 		this.displayName = displayName;
-		this.subscribers = new LinkedBlockingDeque<>();
-		this.followers = new LinkedBlockingDeque<>();
 	}
 
 	public String getName() {
