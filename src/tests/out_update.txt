@@ -1,8 +1,0 @@
-Result: nmp
-Use: java aula2.clients.UpdateUserClient name oldPassword newDisplayName newDomain newPassword
-Use: java aula2.clients.UpdateUserClient name oldPassword newDisplayName newDomain newPassword
-Success : User [name=nmp, pwd=54321, displayName=Francisco Parrinha, domain=novaStudent]
-User [name=nmp, pwd=54321, displayName=Francisco Parrinha, domain=novaStudent]
-null
-null
-User [name=nmp, pwd=54321, displayName=Francisco Parrinha, domain=novaStudent]

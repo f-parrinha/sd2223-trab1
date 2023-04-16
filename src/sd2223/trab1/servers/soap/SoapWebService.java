@@ -1,4 +1,4 @@
-package sd2223.trab1.server.soap;
+package sd2223.trab1.servers.soap;
 
 import java.util.function.Function;
 
@@ -11,7 +11,7 @@ public abstract class SoapWebService<E extends Throwable> {
 	SoapWebService( Function<Result<?>, E> exceptionMapper) {
 		this.exceptionMapper = exceptionMapper;
 	}
-	
+
 	/*
 	 * Given a Result<T> returns T value or throws an exception created using the
 	 * given function

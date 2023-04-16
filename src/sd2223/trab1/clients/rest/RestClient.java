@@ -1,21 +1,23 @@
 package sd2223.trab1.clients.rest;
 
-import jakarta.ws.rs.ProcessingException;
-import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.client.ClientBuilder;
-import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.Response.Status;
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.ClientProperties;
-import sd2223.trab1.api.java.Result;
-import sd2223.trab1.api.java.Result.ErrorCode;
+import static sd2223.trab1.api.java.Result.error;
+import static sd2223.trab1.api.java.Result.ok;
 
 import java.net.URI;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
-import static sd2223.trab1.api.java.Result.error;
-import static sd2223.trab1.api.java.Result.ok;
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.ClientProperties;
+
+import sd2223.trab1.api.java.Result;
+import sd2223.trab1.api.java.Result.ErrorCode;
+import jakarta.ws.rs.ProcessingException;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 
 public class RestClient {
 	private static Logger Log = Logger.getLogger(RestClient.class.getName());

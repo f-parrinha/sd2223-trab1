@@ -1,4 +1,4 @@
-package sd2223.trab1.server.soap;
+package sd2223.trab1.servers.soap;
 
 
 import java.util.List;
@@ -8,7 +8,7 @@ import sd2223.trab1.api.User;
 import sd2223.trab1.api.java.Users;
 import sd2223.trab1.api.soap.UsersException;
 import sd2223.trab1.api.soap.UsersService;
-import sd2223.trab1.server.java.JavaUsers;
+import sd2223.trab1.servers.java.JavaUsers;
 import jakarta.jws.WebService;
 
 @WebService(serviceName=UsersService.NAME, targetNamespace=UsersService.NAMESPACE, endpointInterface=UsersService.INTERFACE)
@@ -31,9 +31,9 @@ public class SoapUsersWebService extends SoapWebService<UsersException> implemen
 	public User getUser(String name, String pwd) throws UsersException {
 		return super.fromJavaResult( impl.getUser(name, pwd));
 	}
-
+	
 	@Override
-	public void updateUser(String name, String pwd, User user) throws UsersException {
+	public User updateUser(String name, String pwd, User user) throws UsersException {
 		throw new RuntimeException("Not Implemented...");
 	}
 

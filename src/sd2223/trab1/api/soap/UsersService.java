@@ -24,22 +24,22 @@ public interface UsersService {
 	/**
 	 * Obtains the information on the user identified by name.
 	 * @param name name of the user
-	 * @param pwd password of the user
+	 * @param password password of the user
 	 * @throws UsersException otherwise
 	 */
 	@WebMethod
 	User getUser(String name, String pwd) throws UsersException;
-
+	
 	/**
 	 * Modifies the information of a user. Values of null in any field of the user will be 
-	 * considered as if the fields is not to be modified (the id cannot be modified).
+	 * considered as if the the fields is not to be modified (the id cannot be modified).
 	 * @param name name of the user
 	 * @param pwd password of the user
 	 * @param user Updated information
 	 * @throws UsersException otherwise
 	 */
 	@WebMethod
-	void updateUser(String name, String pwd, User user) throws UsersException;
+	User updateUser(String name, String pwd, User user) throws UsersException;
 	
 	/**
 	 * Deletes the user identified by userId. The spreadsheets owned by the user should be eventually removed (asynchronous

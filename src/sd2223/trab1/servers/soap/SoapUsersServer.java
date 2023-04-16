@@ -1,4 +1,4 @@
-package sd2223.trab1.server.soap;
+package sd2223.trab1.servers.soap;
 
 
 import java.net.InetAddress;

@@ -1,12 +1,4 @@
-package sd2223.trab1.server.util;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.logging.Logger;
-
-import org.glassfish.jersey.message.internal.ReaderWriter;
+package sd2223.trab1.util;
 
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.container.ContainerRequestContext;
@@ -14,6 +6,13 @@ import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.container.ContainerResponseContext;
 import jakarta.ws.rs.container.ContainerResponseFilter;
 import jakarta.ws.rs.core.MediaType;
+import org.glassfish.jersey.message.internal.ReaderWriter;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.logging.Logger;
 
 public class CustomLoggingFilter implements ContainerRequestFilter, ContainerResponseFilter {
 	private static Logger Log = Logger.getLogger(CustomLoggingFilter.class.getName());

@@ -1,21 +1,29 @@
 package sd2223.trab1.api;
+
+import java.util.List;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.LinkedBlockingDeque;
+
 /**
  * Represents a user in the system. Note: the password of a user should not be
  * returned in any method.
  */
 public class User {
-
-	/** Variables */
 	private String name;
 	private String pwd;
 	private String displayName;
 	private String domain;
+
+	private BlockingDeque<String> followers;
+	private BlockingDeque<String> subscribers;
 
 	public User() {
 		this.pwd = null;
 		this.name = null;
 		this.domain = null;
 		this.displayName = null;
+		this.subscribers = new LinkedBlockingDeque<>();
+		this.followers = new LinkedBlockingDeque<>();
 	}
 
 	public User(String name, String pwd, String domain, String displayName) {
@@ -23,6 +31,8 @@ public class User {
 		this.name = name;
 		this.domain = domain;
 		this.displayName = displayName;
+		this.subscribers = new LinkedBlockingDeque<>();
+		this.followers = new LinkedBlockingDeque<>();
 	}
 
 	public String getName() {

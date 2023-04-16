@@ -1,8 +1,8 @@
 package sd2223.trab1.clients.soap;
 
-import sd2223.trab1.api.User;
-
 import java.net.URI;
+
+import sd2223.trab1.api.User;
 
 public class CreateUsersClient {
 
@@ -20,7 +20,7 @@ public class CreateUsersClient {
 		
 		var users = new SoapUsersClient( URI.create( serverURI ));
 		
-		var res = users.createUser( new User( name, pwd, domain, displayName) );
+		var res = users.createUser( new User( name, pwd, domain, displayName ) );
 		System.out.println( res );
 	}
 

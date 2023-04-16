@@ -1,16 +1,16 @@
 package sd2223.trab1.clients.rest;
 
-import jakarta.ws.rs.client.Entity;
-import jakarta.ws.rs.client.WebTarget;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
+import java.net.URI;
+import java.util.List;
+
 import sd2223.trab1.api.User;
 import sd2223.trab1.api.java.Result;
 import sd2223.trab1.api.java.Users;
 import sd2223.trab1.api.rest.UsersService;
-
-import java.net.URI;
-import java.util.List;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 
 public class RestUsersClient extends RestClient implements Users {
@@ -39,13 +39,31 @@ public class RestUsersClient extends RestClient implements Users {
 
 		return super.toJavaResult(r, User.class);
 	}
-	
-	private Result<Void> clt_verifyPassword(String name, String pwd) {
-		Response r = target.path( name ).path(UsersService.PWD)
-				.queryParam(UsersService.PWD, pwd).request()
+
+	private Result<User> clt_updateUser(String userId, String password, User user) {
+		Response r = target.path( userId ).path(UsersService.PWD)
+				.queryParam(UsersService.PWD, password).request()
 				.get();
 
-		return super.toJavaResult(r, Void.class);
+		return super.toJavaResult(r, User.class);
+	}
+
+	private Result<User> clt_deleteUser(String userId, String password) {
+		Response r = target.path( userId )
+				.queryParam(UsersService.PWD, password).request()
+				.accept(MediaType.APPLICATION_JSON)
+				.delete();
+
+		return super.toJavaResult(r, User.class);
+	}
+
+	@SuppressWarnings("unchecked")
+	private Result<List<User>> clt_searchUsers(String pattern) {
+		Response r = target.queryParam(UsersService.QUERY, pattern).request()
+				.accept(MediaType.APPLICATION_JSON)
+				.get();
+
+		return super.toJavaResult(r, (Class<List<User>>)(Object)List.class);
 	}
 	
 	@Override
@@ -60,16 +78,16 @@ public class RestUsersClient extends RestClient implements Users {
 
 	@Override
 	public Result<User> updateUser(String userId, String password, User user) {
-		throw new RuntimeException("Not Implemented...");
+		return super.reTry(() -> clt_updateUser(userId, password, user));
 	}
 
 	@Override
 	public Result<User> deleteUser(String userId, String password) {
-		throw new RuntimeException("Not Implemented...");
+		return super.reTry(()-> clt_deleteUser(userId, password));
 	}
 
 	@Override
 	public Result<List<User>> searchUsers(String pattern) {
-		throw new RuntimeException("Not Implemented...");
-	}	
+		return super.reTry(()-> clt_searchUsers(pattern));
+	}
 }

@@ -1,7 +1,0 @@
-Result: nmp
-Use: java aula2.clients.DeleteUserClient userId password
-Use: java aula2.clients.DeleteUserClient userId password
-Result: null
-Result: null
-Result: User [name=nmp, pwd=12345, displayName=Nuno Preguica, domain=nova]
-null

@@ -1,15 +1,16 @@
 package sd2223.trab1.clients.soap;
 
+import java.net.URI;
+import java.util.List;
+
+import javax.xml.namespace.QName;
+
 import sd2223.trab1.api.User;
 import sd2223.trab1.api.java.Result;
 import sd2223.trab1.api.java.Users;
 import sd2223.trab1.api.soap.UsersService;
 import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.Service;
-
-import javax.xml.namespace.QName;
-import java.net.URI;
-import java.util.List;
 
 public class SoapUsersClient extends SoapClient implements Users {
 
@@ -38,7 +39,7 @@ public class SoapUsersClient extends SoapClient implements Users {
 	public Result<User> getUser(String name, String pwd) {
 		return super.reTry( () -> super.toJavaResult( () -> stub().getUser(name, pwd) ) );
 	}
-	
+
 	@Override
 	public Result<User> updateUser(String name, String pwd, User user) {
 		throw new RuntimeException("Not Implemented...");

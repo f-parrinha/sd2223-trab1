@@ -1,10 +1,8 @@
 package sd2223.trab1.discovery;
 
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.ListMultimap;
-
 import java.net.*;
-import java.util.List;
+import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 /**
@@ -28,7 +26,7 @@ public interface Discovery {
 	 * @param minReplies - minimum number of requested URIs. Blocks until the number is satisfied.
 	 * @return array with the discovered URIs for the given service name.
 	 */
-	public URI[] knownUrisOf(String serviceName, int minReplies);
+	public URI knownUrisOf(String serviceName, String domain);
 
 
 	/**
@@ -44,7 +42,7 @@ public interface Discovery {
  * Implementation of the multicast discovery service
  */
 class DiscoveryImpl implements Discovery {
-	private static Logger Log = Logger.getLogger(Discovery.class.getName());
+	private static final Logger Log = Logger.getLogger(Discovery.class.getName());
 
 	// The pre-aggreed multicast endpoint assigned to perform discovery.
 
@@ -61,7 +59,7 @@ class DiscoveryImpl implements Discovery {
 
 	private static Discovery singleton;
 
-	private final ListMultimap<String, URI> serviceMap;
+	private final ConcurrentHashMap<String, URI> serviceMap;
 
 	synchronized static Discovery getInstance() {
 		if (singleton == null) {
@@ -71,7 +69,7 @@ class DiscoveryImpl implements Discovery {
 	}
 
 	private DiscoveryImpl() {
-		serviceMap = LinkedListMultimap.create();
+		serviceMap = new ConcurrentHashMap<>();
 		this.startListener();
 	}
 
@@ -80,8 +78,13 @@ class DiscoveryImpl implements Discovery {
 		Log.info(String.format("Starting Discovery announcements on: %s for: %s -> %s\n", DISCOVERY_ADDR, serviceName,
 				serviceURI));
 
+
 		var pktBytes = String.format("%s:%s%s%s", domainName, serviceName, DELIMITER, serviceURI).getBytes();
 		var pkt = new DatagramPacket(pktBytes, pktBytes.length, DISCOVERY_ADDR);
+
+		// TEST
+		Log.info("Announcing:" + String.format("%s:%s%s%s", domainName, serviceName, DELIMITER, serviceURI));
+		// TEST
 
 		// start thread to send periodic announcements
 		new Thread(() -> {
@@ -102,15 +105,17 @@ class DiscoveryImpl implements Discovery {
 
 
 	@Override
-	public URI[] knownUrisOf(String serviceName, int minEntries) {
-		List<URI> uris =  serviceMap.get(serviceName);
+	public URI knownUrisOf(String serviceName, String domain) {
+		URI uri =  serviceMap.get(domain+":"+serviceName);
 		long time = System.currentTimeMillis();
 
-		while(uris.size() < minEntries && System.currentTimeMillis() - time < DISCOVERY_RETRY_TIMEOUT){
-			uris = serviceMap.get(serviceName);
+		while(uri == null && System.currentTimeMillis() - time < DISCOVERY_RETRY_TIMEOUT){
+			uri = serviceMap.get(serviceName);
 		}
 
-		return uris.toArray(URI[]::new);
+		if(uri == null) { Log.severe("Connection timeout. No URI found."); }
+
+		return uri;
 	}
 
 	private void startListener() {
@@ -128,11 +133,11 @@ class DiscoveryImpl implements Discovery {
 						var msg = new String(pkt.getData(), 0, pkt.getLength());
 						//Log.info(String.format("Received: %s", msg));
 
-						var parts = msg.split("[:\\\t]");
+						var parts = msg.split(DELIMITER);
+
 						if (parts.length == 2) {
-							var domain = parts[0];
-							var serviceName = parts[1];
-							var uri = URI.create(parts[2]+"@"+domain);
+							var serviceName = parts[0];
+							var uri = URI.create(parts[1]);
 
 							serviceMap.put(serviceName, uri);
 						}
