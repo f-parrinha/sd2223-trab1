@@ -13,6 +13,7 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import sd2223.trab1.api.Message;
 import sd2223.trab1.api.User;
+import sd2223.trab1.api.soap.UsersException;
 
 @Path(FeedsService.PATH)
 public interface FeedsService {
@@ -43,7 +44,7 @@ public interface FeedsService {
 	@Path("/{" + USER + "}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	long postMessage(@PathParam(USER) String user, @QueryParam(PWD) String pwd, Message msg);
+	long postMessage(@PathParam(USER) String user, @QueryParam(PWD) String pwd, Message msg) throws UsersException;
 
 	/**
 	 * Removes the message identified by mid from the feed of user.
@@ -59,7 +60,7 @@ public interface FeedsService {
 	 */
 	@DELETE
 	@Path("/{" + USER + "}/{" + MID + "}")
-	void removeFromPersonalFeed(@PathParam(USER) String user, @PathParam(MID) long mid, @QueryParam(PWD) String pwd);
+	void removeFromPersonalFeed(@PathParam(USER) String user, @PathParam(MID) long mid, @QueryParam(PWD) String pwd) throws UsersException;
 
 	/**
 	 * Obtains the message with id from the feed of user (may be a remote user)
@@ -73,7 +74,7 @@ public interface FeedsService {
 	@GET
 	@Path("/{" + USER + "}/{" + MID + "}")
 	@Produces(MediaType.APPLICATION_JSON)
-	Message getMessage(@PathParam(USER) String user, @PathParam(MID) long mid);
+	Message getMessage(@PathParam(USER) String user, @PathParam(MID) long mid) throws UsersException;
 
 	/**
 	 * Returns a list of all messages stored in the server for a given user newer than time
@@ -87,7 +88,7 @@ public interface FeedsService {
 	@GET
 	@Path("/{" + USER +"}")
 	@Produces(MediaType.APPLICATION_JSON)
-	List<Message> getMessages(@PathParam(USER) String user, @QueryParam(TIME) long time);
+	List<Message> getMessages(@PathParam(USER) String user, @QueryParam(TIME) long time) throws UsersException;
 
 
 
@@ -105,7 +106,7 @@ public interface FeedsService {
 	 */
 	@POST
 	@Path("/sub/{" + USER + "}/{" + USERSUB + "}")
-	void subUser(@PathParam(USER) String user, @PathParam(USERSUB) String userSub, @QueryParam(PWD) String pwd);
+	void subUser(@PathParam(USER) String user, @PathParam(USERSUB) String userSub, @QueryParam(PWD) String pwd) throws UsersException;
 
 	/**
 	 * UnSubscribe a user
@@ -121,7 +122,7 @@ public interface FeedsService {
 	 */
 	@DELETE
 	@Path("/sub/{" + USER + "}/{" + USERSUB + "}")
-	void unsubscribeUser(@PathParam(USER) String user, @PathParam(USERSUB) String userSub, @QueryParam(PWD) String pwd);
+	void unsubscribeUser(@PathParam(USER) String user, @PathParam(USERSUB) String userSub, @QueryParam(PWD) String pwd) throws UsersException;
 
 
 
@@ -135,5 +136,5 @@ public interface FeedsService {
 	@GET
 	@Path("/sub/list/{" + USER + "}")
 	@Produces(MediaType.APPLICATION_JSON)
-	List<String> listSubs(@PathParam(USER) String user);
+	List<String> listSubs(@PathParam(USER) String user) throws UsersException;
 }

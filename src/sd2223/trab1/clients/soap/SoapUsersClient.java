@@ -42,17 +42,17 @@ public class SoapUsersClient extends SoapClient implements Users {
 
 	@Override
 	public Result<User> updateUser(String name, String pwd, User user) {
-		throw new RuntimeException("Not Implemented...");
+		return super.reTry( () -> super.toJavaResult( () -> stub().updateUser(name, pwd, user)));
 	}
 
 	@Override
 	public Result<User> deleteUser(String name, String pwd) {
-		throw new RuntimeException("Not Implemented...");
+		return super.reTry( () -> super.toJavaResult( () -> stub().deleteUser(name, pwd)));
 	}
 
 	@Override
 	public Result<List<User>> searchUsers(String pattern) {
-		throw new RuntimeException("Not Implemented...");
+		return super.reTry( () -> super.toJavaResult( () -> stub().searchUsers(pattern)));
 	}
 
 	
