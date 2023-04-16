@@ -20,8 +20,10 @@ import jakarta.ws.rs.core.Response;
  */
 public class RestUsersClient extends RestClient implements Users {
 
+	/** Variables */
 	final WebTarget target;
-	
+
+	/** Constructor */
 	public RestUsersClient( URI serverURI ) {
 		super( serverURI );
 		target = client.target( serverURI ).path( UsersService.PATH );

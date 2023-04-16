@@ -69,7 +69,7 @@ public interface FeedsService {
 	 * @param mid id of the message
 	 *
 	 * @return	200 the message if it exists;
-	 *			404 if the user or the message does not exists
+	 *			404 if the user or the message does not exist
 	 */
 	@GET
 	@Path("/{" + USER + "}/{" + MID + "}")
