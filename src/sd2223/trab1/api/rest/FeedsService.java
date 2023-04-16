@@ -109,7 +109,7 @@ public interface FeedsService {
 	void subUser(@PathParam(USER) String user, @PathParam(USERSUB) String userSub, @QueryParam(PWD) String pwd) throws UsersException;
 
 	/**
-	 * UnSubscribe a user
+	 * Unsubscribe a user
 	 * A user must contact the server of her domain directly (i.e., this operation should not be
 	 * propagated to other domain)
 	 *

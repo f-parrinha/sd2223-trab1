@@ -9,6 +9,13 @@ import sd2223.trab1.servers.soap.SoapFeedsWebService;
 import java.net.URI;
 import java.util.List;
 
+
+/**
+ * Class SoapFeedsClient - A soap feeds client
+ *
+ * @author Francisco Parrinha	58369
+ * @author Martin Magdalinchev	58172
+ */
 public class SoapFeedsClient extends SoapClient implements Feeds {
 
     public SoapFeedsClient(URI serverURI) {

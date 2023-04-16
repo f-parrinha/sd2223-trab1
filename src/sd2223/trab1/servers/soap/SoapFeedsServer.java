@@ -8,6 +8,14 @@ import java.util.logging.Logger;
 import jakarta.xml.ws.Endpoint;
 import sd2223.trab1.discovery.Discovery;
 
+/**
+ * Class SoapFeedsServer - A soap feeds server, receives http requests
+ * <p>
+ * Uses a discovery system to announce his URI
+ *
+ * @author Francisco Parrinha	58369
+ * @author Martin Magdalinchev	58172
+ */
 public class SoapFeedsServer {
 
     public static final int PORT = 8081;

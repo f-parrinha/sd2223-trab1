@@ -8,8 +8,18 @@ import java.net.InetAddress;
 import java.net.URI;
 import java.util.logging.Logger;
 
+/**
+ * Class RestFeedsServer - A rest feeds server, receives http requests
+ * <p>
+ * Uses a discovery system to announce his URI
+ *
+ * @author Francisco Parrinha	58369
+ * @author Martin Magdalinchev	58172
+ */
 public class RestFeedsServer {
-    private static Logger Log = Logger.getLogger(RestUsersServer.class.getName());
+
+    /** Constants */
+    private static final Logger LOG = Logger.getLogger(RestUsersServer.class.getName());
 
     static {
         System.setProperty("java.net.preferIPv4Stack", "true");
@@ -39,11 +49,11 @@ public class RestFeedsServer {
 
             JdkHttpServerFactory.createHttpServer(URI.create(serverURI), config);
 
-            Log.info(String.format("%s Server ready @ %s\n", SERVICE, serverURI));
+            LOG.info(String.format("%s Server ready @ %s\n", SERVICE, serverURI));
 
             // More code can be executed here...
         } catch (Exception e) {
-            Log.severe(e.getMessage());
+            LOG.severe(e.getMessage());
         }
     }
 }

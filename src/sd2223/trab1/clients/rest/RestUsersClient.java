@@ -12,7 +12,12 @@ import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-
+/**
+ * Class RestUsersClient - A rest users client, generates http requests
+ *
+ * @author Francisco Parrinha	58369
+ * @author Martin Magdalinchev	58172
+ */
 public class RestUsersClient extends RestClient implements Users {
 
 	final WebTarget target;

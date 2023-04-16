@@ -12,6 +12,12 @@ import sd2223.trab1.api.soap.UsersService;
 import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.Service;
 
+/**
+ * Class SoapUsersClient - A soap users client
+ *
+ * @author Francisco Parrinha	58369
+ * @author Martin Magdalinchev	58172
+ */
 public class SoapUsersClient extends SoapClient implements Users {
 
 	public SoapUsersClient( URI serverURI ) {

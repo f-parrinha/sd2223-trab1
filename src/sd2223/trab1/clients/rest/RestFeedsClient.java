@@ -13,6 +13,12 @@ import sd2223.trab1.api.rest.UsersService;
 import java.net.URI;
 import java.util.List;
 
+/**
+ * Class RestFeedsClient - A rest feeds client, generates http requests
+ *
+ * @author Francisco Parrinha	58369
+ * @author Martin Magdalinchev	58172
+ */
 public class RestFeedsClient extends RestClient implements Feeds {
 
     /** Variables */

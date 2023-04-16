@@ -8,6 +8,12 @@ import sd2223.trab1.api.rest.UsersService;
 import sd2223.trab1.servers.java.JavaUsers;
 import jakarta.inject.Singleton;
 
+/**
+ * Class RestUsersResource - routes requests
+ *
+ * @author Francisco Parrinha	58369
+ * @author Martin Magdalinchev	58172
+ */
 @Singleton
 public class RestUsersResource extends RestResource implements UsersService {
 

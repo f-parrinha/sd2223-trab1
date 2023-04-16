@@ -8,6 +8,14 @@ import java.util.logging.Logger;
 import jakarta.xml.ws.Endpoint;
 import sd2223.trab1.discovery.Discovery;
 
+/**
+ * Class SoapUsersServer - A soap users server, receives http requests
+ * <p>
+ * Uses a discovery system to announce his URI
+ *
+ * @author Francisco Parrinha	58369
+ * @author Martin Magdalinchev	58172
+ */
 public class SoapUsersServer {
 
     public static final int PORT = 8081;
@@ -33,7 +41,7 @@ public class SoapUsersServer {
             Discovery discovery = Discovery.getInstance();
             discovery.announce(domain, SERVICE_NAME, serverURI);
 
-            Endpoint.publish(serverURI.replace(ip, "0.0.0.0"), new SoapUsersWebService());
+            Endpoint.publish(serverURI, new SoapUsersWebService());
 
             Log.info(String.format("%s Soap Server ready @ %s\n", SERVICE_NAME, serverURI));
         } catch (Exception e) {

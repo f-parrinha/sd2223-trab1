@@ -6,10 +6,15 @@ import sd2223.trab1.api.java.Feeds;
 import sd2223.trab1.api.rest.FeedsService;
 import sd2223.trab1.api.soap.UsersException;
 import sd2223.trab1.servers.java.JavaFeeds;
-import sd2223.trab1.servers.soap.SoapWebService;
 
 import java.util.List;
 
+/**
+ * Class SoapFeedsWebService - routes requests
+ *
+ * @author Francisco Parrinha	58369
+ * @author Martin Magdalinchev	58172
+ */
 @Singleton
 public class SoapFeedsWebService extends SoapWebService<UsersException> implements FeedsService {
     final Feeds impl;

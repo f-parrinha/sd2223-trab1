@@ -8,14 +8,20 @@ import sd2223.trab1.servers.java.JavaFeeds;
 
 import java.util.List;
 
+/**
+ * Class RestFeedsResource - routes requests
+ *
+ * @author Francisco Parrinha	58369
+ * @author Martin Magdalinchev	58172
+ */
 @Singleton
 public class RestFeedsResource extends RestResource implements FeedsService {
     final Feeds impl;
 
-
-    public RestFeedsResource(String domain, long id) {
-        this.impl = new JavaFeeds(domain, id);
+    public RestFeedsResource(String domain, long base) {
+        this.impl = new JavaFeeds(domain, base);
     }
+
     @Override
     public long postMessage(String user, String pwd, Message msg) {
         return super.fromJavaResult(impl.postMessage( user, pwd, msg));

@@ -8,14 +8,21 @@ import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import sd2223.trab1.discovery.Discovery;
 
+/**
+ * Class RestUsersServer - Rest users server
+ * <p>
+ * Uses a discovery system to announce his URI
+ *
+ * @author Francisco Parrinha	58369
+ * @author Martin Magdalinchev	58172
+ */
 public class RestUsersServer {
-
-	private static Logger Log = Logger.getLogger(RestUsersServer.class.getName());
-
 	static {
 		System.setProperty("java.net.preferIPv4Stack", "true");
 	}
 
+	/** Constants */
+	private static final Logger LOG = Logger.getLogger(RestUsersServer.class.getName());
 	public static final int PORT = 8080;
 	public static final String SERVICE = "UsersService";
 	private static final String SERVER_URI_FMT = "http://%s:%s/rest";
@@ -38,11 +45,11 @@ public class RestUsersServer {
 
 			JdkHttpServerFactory.createHttpServer(URI.create(serverURI), config);	// If it does not work add after URI.create(): .replace(ip, "0.0.0.0")
 
-			Log.info(String.format("%s Server ready @ %s\n", SERVICE, serverURI));
+			LOG.info(String.format("%s Server ready @ %s\n", SERVICE, serverURI));
 
 			// More code can be executed here...
 		} catch (Exception e) {
-			Log.severe(e.getMessage());
+			LOG.severe(e.getMessage());
 		}
 	}
 }

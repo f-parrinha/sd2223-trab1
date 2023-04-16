@@ -42,8 +42,6 @@ public class JavaUsers implements Users {
 			return Result.error(ErrorCode.CONFLICT);
 		}
 
-
-
 		return Result.ok( user.getName() + "@" + user.getDomain() );
 	}
 

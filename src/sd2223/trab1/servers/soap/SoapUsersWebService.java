@@ -11,6 +11,12 @@ import sd2223.trab1.api.soap.UsersService;
 import sd2223.trab1.servers.java.JavaUsers;
 import jakarta.jws.WebService;
 
+/**
+ * Class SoapUsersWebService - routes requests
+ *
+ * @author Francisco Parrinha	58369
+ * @author Martin Magdalinchev	58172
+ */
 @WebService(serviceName=UsersService.NAME, targetNamespace=UsersService.NAMESPACE, endpointInterface=UsersService.INTERFACE)
 public class SoapUsersWebService extends SoapWebService<UsersException> implements UsersService {
 

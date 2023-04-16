@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class RestResource {
 
+	/** Constants */
 	public static AtomicLong num_seq = new AtomicLong(0);
 
 	/**
