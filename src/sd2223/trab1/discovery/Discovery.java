@@ -23,7 +23,7 @@ public interface Discovery {
 	/**
 	 * Get discovered URIs for a given service name
 	 * @param serviceName - name of the service
-	 * @param minReplies - minimum number of requested URIs. Blocks until the number is satisfied.
+	 * @param domain - domain of the server
 	 * @return array with the discovered URIs for the given service name.
 	 */
 	public URI knownUrisOf(String serviceName, String domain);
@@ -136,7 +136,7 @@ class DiscoveryImpl implements Discovery {
 						var parts = msg.split(DELIMITER);
 
 						if (parts.length == 2) {
-							var serviceName = parts[0];
+							var serviceName = parts[0];		// written as: domain:serviceName
 							var uri = URI.create(parts[1]);
 
 							serviceMap.put(serviceName, uri);

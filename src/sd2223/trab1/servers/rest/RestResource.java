@@ -4,17 +4,24 @@ import sd2223.trab1.api.java.Result;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response.Status;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 public class RestResource {
+
+	public static AtomicLong num_seq = new AtomicLong(0);
 
 	/**
 	 * Given a Result<T>, either returns the value, or throws the JAX-WS Exception
 	 * matching the error code...
 	 */
 	protected <T> T fromJavaResult(Result<T> result) {
-		if (result.isOK())
+		if (result.isOK()) {
+			num_seq.addAndGet(1);
 			return result.value();
-		else
+		}
+		else {
 			throw new WebApplicationException(statusCodeFrom(result));
+		}
 	}
 
 	/**

@@ -11,6 +11,9 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
+import static sd2223.trab1.servers.rest.RestResource.num_seq;
+
+
 /**
  * Class JavaFeeds - Handles feeds resource
  *
@@ -98,7 +101,7 @@ public class JavaFeeds implements Feeds {
     public Result<Message> getMessage(String user, long mid) {
         LOG.info("getMessage : " + mid);
 
-        /** @TODO Propagation */
+        /*@TODO Add domain propagation*/
 
         List<Message> feed = feeds.get(user);
         Optional<Message> message = feed.stream().filter(m -> m.getId() == mid).findFirst();
@@ -115,7 +118,7 @@ public class JavaFeeds implements Feeds {
 
     @Override
     public Result<List<Message>> getMessages(String user, long time) {
-        /** @TODO Propagation */
+        /*@TODO Add domain propagation*/
 
         var feed = feeds.get(user);
 
@@ -206,6 +209,7 @@ public class JavaFeeds implements Feeds {
     private void addPropagateToFollowers(Message message, List<String> followers){
         if(followers == null) { return; }
 
+        /*@TODO Add domain propagation*/
         for (String u : followers){
             addToFeed(u, message);
         }
@@ -219,6 +223,7 @@ public class JavaFeeds implements Feeds {
     private void removePropagateToFollowers(Message message, List<String> followers){
         if(followers == null) { return; }
 
+        /*@TODO Add domain propagation*/
         for (String u : followers){
             removeFromFeed(u, message);
         }
@@ -230,7 +235,8 @@ public class JavaFeeds implements Feeds {
      * @param message message to add
      */
     private void addToFeed(String user, Message message){
-        message.setId(id);  /*@TODO - Create unique IDs */
+        long uniqueID = num_seq.get() * 256 + id;
+        message.setId(uniqueID);  /*@TODO - Create unique IDs */
         List<Message> feedTmp = feeds.get(user);
         List<Message> feed = feedTmp == null ? new LinkedList<>() : feedTmp; feed.add(message);
         feeds.put(user, feed);
