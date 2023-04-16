@@ -41,6 +41,9 @@ public class JavaUsers implements Users {
 			LOG.info("User already exists.");
 			return Result.error(ErrorCode.CONFLICT);
 		}
+
+
+
 		return Result.ok( user.getName() + "@" + user.getDomain() );
 	}
 

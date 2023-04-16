@@ -17,6 +17,7 @@ public class SoapUsersWebService extends SoapWebService<UsersException> implemen
 	static Logger Log = Logger.getLogger(SoapUsersWebService.class.getName());
 	
 	final Users impl;
+
 	public SoapUsersWebService() {
 		super( (result)-> new UsersException( result.error().toString()));
 		this.impl = new JavaUsers();
