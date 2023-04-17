@@ -25,10 +25,10 @@ public class SoapUsersServer {
 
     public static void main(String[] args) throws Exception {
 
-		System.setProperty("com.sun.xml.ws.transport.http.client.HttpTransportPipe.dump", "true");
-		System.setProperty("com.sun.xml.internal.ws.transport.http.client.HttpTransportPipe.dump", "true");
-		System.setProperty("com.sun.xml.ws.transport.http.HttpAdapter.dump", "true");
-		System.setProperty("com.sun.xml.internal.ws.transport.http.HttpAdapter.dump", "true");
+//		System.setProperty("com.sun.xml.ws.transport.http.client.HttpTransportPipe.dump", "true");
+//		System.setProperty("com.sun.xml.internal.ws.transport.http.client.HttpTransportPipe.dump", "true");
+//		System.setProperty("com.sun.xml.ws.transport.http.HttpAdapter.dump", "true");
+//		System.setProperty("com.sun.xml.internal.ws.transport.http.HttpAdapter.dump", "true");
 
         String domain = args[0];
 

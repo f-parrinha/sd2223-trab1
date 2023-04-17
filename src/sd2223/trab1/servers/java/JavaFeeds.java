@@ -180,6 +180,9 @@ public class JavaFeeds implements Feeds {
 
         var result = propagator.requestUser(user, "");
         Feed feed = feeds.get(user);
+        if(feed == null) {
+            return Result.error(Result.ErrorCode.BAD_REQUEST);
+        }
         Message message = feed.getMessage(mid);
         if(message == null) { message = propagator.propagateSingle(mid, feeds.get(user).getSubscribers()); }  // Propagate to get message..
 
