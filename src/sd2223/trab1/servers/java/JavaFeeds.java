@@ -56,8 +56,8 @@ public class JavaFeeds implements Feeds {
 
                 if(user_domain[1].equals(domain)) {
                     // Internal domain propagation
-                    var feed = feeds.get(u);
-                    message = feed == null ? null :feed.getMessage(mid);
+                    // var feed = feeds.get(u);
+                    message = feeds.get(u).getMessage(mid);
 
                 } else {
                     // Remote domain propagation
@@ -169,13 +169,18 @@ public class JavaFeeds implements Feeds {
 
     @Override
     public Result<Message> getMessage(String user, long mid) {
-        // Check message in feed, propagate internally if needed
+        // Check user is remote
+        String domain = user.split("@")[1];
+        if(!domain.equals(this.domain)) {
+            var client = FeedsClientFactory.get(domain);
+            return client.getMessage(user, mid);
+        }
+
+        // User is local
         var result = propagator.requestUser(user, "", domain);
         Feed feed = feeds.get(user);
-        if(feed == null) {
-            return Result.error(Result.ErrorCode.BAD_REQUEST);
-        }
         Message message = feed.getMessage(mid);
+
         if(message == null) { message = propagator.propagateGetSingle(mid, feeds.get(user).getSubscribers()); }  // Propagate to get message...
 
         // Check if user or message exists
@@ -188,7 +193,14 @@ public class JavaFeeds implements Feeds {
 
     @Override
     public Result<List<Message>> getMessages(String user, long time) {
-        // Check if user exists in domain or if password is correct
+        // Check user is remote
+        String domain = user.split("@")[1];
+        if(!domain.equals(this.domain)) {
+            var client = FeedsClientFactory.get(domain);
+            return client.getMessages(user, time);
+        }
+
+        // User is local. Check user exists
         var result = propagator.requestUser(user, "", domain);
         if (!result.isOK() && result.error().equals(Result.ErrorCode.NOT_FOUND)) {
             return Result.error(result.error());

@@ -33,7 +33,6 @@ public class RestFeedsServer {
         // Get input
         String domain = args[0];
         long id = Long.parseLong(args[1]);
-        System.out.println(id);
 
         // Init server
         try {
