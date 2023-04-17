@@ -125,8 +125,8 @@ public class JavaFeeds implements Feeds {
         LOG.info("postMessage : " + message);
 
         // Check if user data is valid
-        if(user == null || pwd == null) {
-            LOG.info("Name or Password null.");
+        if(user == null || pwd == null || !user.split("@")[1].equals(domain)) {
+            LOG.info("Name or Password null or user does not belong in domain.");
             return Result.error(Result.ErrorCode.BAD_REQUEST);
         }
 
