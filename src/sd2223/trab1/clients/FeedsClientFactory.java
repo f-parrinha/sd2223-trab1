@@ -8,6 +8,7 @@ import sd2223.trab1.clients.rest.RestUsersClient;
 import sd2223.trab1.clients.soap.SoapFeedsClient;
 import sd2223.trab1.clients.soap.SoapUsersClient;
 import sd2223.trab1.discovery.Discovery;
+import sd2223.trab1.util.Globals;
 
 import java.net.URI;
 
@@ -22,10 +23,9 @@ public class FeedsClientFactory {
     /** Constants */
     private static final String REST = "/rest";
     private static final String SOAP = "/soap";
-    private static final String SERVICE = "FeedsService";
 
     public static Feeds get(String domain) {
-        URI serverURI = Discovery.getInstance().knownUrisOf(SERVICE, domain);
+        URI serverURI = Discovery.getInstance().knownUrisOf(Globals.FEEDS_SERVICE_NAME, domain);
         var uriString = serverURI.toString();
 
         if (uriString.endsWith(REST))

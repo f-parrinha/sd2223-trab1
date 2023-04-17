@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import sd2223.trab1.discovery.Discovery;
+import sd2223.trab1.util.Globals;
 
 /**
  * Class RestUsersServer - Rest users server
@@ -24,7 +25,6 @@ public class RestUsersServer {
 	/** Constants */
 	private static final Logger LOG = Logger.getLogger(RestUsersServer.class.getName());
 	public static final int PORT = 8080;
-	public static final String SERVICE = "UsersService";
 	private static final String SERVER_URI_FMT = "http://%s:%s/rest";
 
 	public static void main(String[] args) {
@@ -36,7 +36,7 @@ public class RestUsersServer {
 			String ip = InetAddress.getLocalHost().getHostAddress();
 			String serverURI = String.format(SERVER_URI_FMT, ip, PORT);
 			Discovery discovery = Discovery.getInstance();
-			discovery.announce(domain, SERVICE, serverURI);
+			discovery.announce(domain, Globals.USERS_SERVICE_NAME, serverURI);
 
 			// Start server
 			ResourceConfig config = new ResourceConfig();
@@ -45,7 +45,7 @@ public class RestUsersServer {
 
 			JdkHttpServerFactory.createHttpServer(URI.create(serverURI), config);	// If it does not work add after URI.create(): .replace(ip, "0.0.0.0")
 
-			LOG.info(String.format("%s Server ready @ %s\n", SERVICE, serverURI));
+			LOG.info(String.format("%s Server ready @ %s\n", Globals.USERS_SERVICE_NAME, serverURI));
 
 			// More code can be executed here...
 		} catch (Exception e) {

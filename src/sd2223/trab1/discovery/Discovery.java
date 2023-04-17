@@ -78,13 +78,8 @@ class DiscoveryImpl implements Discovery {
 		Log.info(String.format("Starting Discovery announcements on: %s for: %s -> %s\n", DISCOVERY_ADDR, serviceName,
 				serviceURI));
 
-
 		var pktBytes = String.format("%s:%s%s%s", domainName, serviceName, DELIMITER, serviceURI).getBytes();
 		var pkt = new DatagramPacket(pktBytes, pktBytes.length, DISCOVERY_ADDR);
-
-		// TEST
-		Log.info("Announcing:" + String.format("%s:%s%s%s", domainName, serviceName, DELIMITER, serviceURI));
-		// TEST
 
 		// start thread to send periodic announcements
 		new Thread(() -> {
