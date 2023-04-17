@@ -6,13 +6,11 @@ import sd2223.trab1.api.User;
 import sd2223.trab1.api.java.Feeds;
 import sd2223.trab1.api.java.Result;
 import sd2223.trab1.clients.UsersClientFactory;
+import sd2223.trab1.util.Globals;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
-
-import static sd2223.trab1.servers.rest.RestResource.num_seq;
-
 
 /**
  * Class JavaFeeds - Handles feeds resource
@@ -188,7 +186,7 @@ public class JavaFeeds implements Feeds {
         Feed feed = feeds.get(user);
         if(feed == null) { feed = new Feed(); }
 
-        message.setId(num_seq.get() * 256 + base);
+        message.setId(Globals.NUM_SEQ.get() * 256 + base);
         feed.addMessage(message);
         feeds.put(user, feed);
     }

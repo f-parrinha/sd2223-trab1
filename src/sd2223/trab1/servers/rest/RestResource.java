@@ -3,13 +3,9 @@ package sd2223.trab1.servers.rest;
 import sd2223.trab1.api.java.Result;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response.Status;
-
-import java.util.concurrent.atomic.AtomicLong;
+import sd2223.trab1.util.Globals;
 
 public class RestResource {
-
-	/** Constants */
-	public static AtomicLong num_seq = new AtomicLong(0);
 
 	/**
 	 * Given a Result<T>, either returns the value, or throws the JAX-WS Exception
@@ -17,7 +13,7 @@ public class RestResource {
 	 */
 	protected <T> T fromJavaResult(Result<T> result) {
 		if (result.isOK()) {
-			num_seq.addAndGet(1);
+			Globals.NUM_SEQ.addAndGet(1);
 			return result.value();
 		}
 		else {
