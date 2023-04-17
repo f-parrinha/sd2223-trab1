@@ -56,7 +56,6 @@ public class JavaFeeds implements Feeds {
 
                 if(user_domain[1].equals(domain)) {
                     // Internal domain propagation
-                    // var feed = feeds.get(u);
                     message = feeds.get(u).getMessage(mid);
 
                 } else {
