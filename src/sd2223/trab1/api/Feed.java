@@ -1,8 +1,6 @@
 package sd2223.trab1.api;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Class Feed - Structure of a feed in the system
@@ -14,13 +12,11 @@ public class Feed {
 
     /** Variables */
     private final List<Message> messages;
-    private final List<String> followers;
     private final List<String> subscribers;
 
     /** Constructor */
     public Feed() {
         this.messages =  new LinkedList<>();
-        this.followers = new LinkedList<>();
         this.subscribers = new LinkedList<>();
     }
 
@@ -51,20 +47,6 @@ public class Feed {
         return null;
     }
 
-
-    /**
-     * Adds a new follower to the owner
-     * @param user follower id@domain
-     * @return followers list
-     */
-    public List<String> addFollower(String user){
-        if(followers.isEmpty() || !followers.contains(user)) {
-            followers.add(user);
-        }
-
-        return followers;
-    }
-
     /**
      * Adds a new message to the feed
      * @param message message to add
@@ -92,19 +74,6 @@ public class Feed {
     }
 
     /**
-     * Removes follower from the feed
-     * @param user follower to remove
-     * @return followers list
-     */
-    public List<String> removeFollower(String user) {
-        if(!followers.isEmpty()) {
-            followers.remove(user);
-        }
-
-        return followers;
-    }
-
-    /**
      * Removes subscriber from the feed
      * @param user subscriber to remove
      * @return subscribers list
@@ -124,15 +93,6 @@ public class Feed {
      */
     public List<Message> getMessages(long time) {
         return time == 0 ? messages : messages.stream().filter(m -> m.getCreationTime() > time).toList();
-    }
-
-
-    /**
-     * Returns feed's followers
-     * @return followers
-     */
-    public List<String> getFollowers() {
-        return followers;
     }
 
     /**

@@ -10,7 +10,6 @@ import sd2223.trab1.api.User;
 import sd2223.trab1.api.java.Result;
 import sd2223.trab1.api.java.Result.ErrorCode;
 import sd2223.trab1.api.java.Users;
-import sd2223.trab1.clients.FeedsClientFactory;
 
 /**
  * Class JavaUsers - Handles users resource
@@ -137,10 +136,8 @@ public class JavaUsers implements Users {
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
 
-		return Result.ok(getPublicUsers(pattern));
+		return Result.ok(getPublicUsersByPattern(pattern));
 	}
-
-	/** Auxiliary methods */
 
 	private User aux_updateUser(User oldUser, User newUser, String userID){
 		// Temp variables
@@ -159,12 +156,7 @@ public class JavaUsers implements Users {
 		return oldUser;
 	}
 
-	/**
-	 * Gets all public users
-	 *
-	 * @return list of public users
-	 */
-	private List<User> getPublicUsers(String pattern){
+	private List<User> getPublicUsersByPattern(String pattern){
 		List<User> result = new LinkedList<>();
 
 		for (User user : users.values()){

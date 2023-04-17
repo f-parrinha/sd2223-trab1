@@ -5,12 +5,15 @@ import sd2223.trab1.api.Message;
 import sd2223.trab1.api.User;
 import sd2223.trab1.api.java.Feeds;
 import sd2223.trab1.api.java.Result;
+import sd2223.trab1.clients.FeedsClientFactory;
 import sd2223.trab1.clients.UsersClientFactory;
 import sd2223.trab1.util.Globals;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 /**
  * Class JavaFeeds - Handles feeds resource
@@ -20,18 +23,101 @@ import java.util.logging.Logger;
  */
 public class JavaFeeds implements Feeds {
 
+    /**
+     * Class Propagator - handles propagations within and to outer domains
+     *
+     * @author Francisco Parrinha   58360
+     * @author Martin Magdalinchev  58172
+     */
+    public final class Propagator {
+
+        /**
+         * Creates GET request to user server from same domain to get the user
+         * @param user user id@domain
+         * @param pwd password
+         * @return Result
+         */
+        public Result<User> requestUser(String user, String pwd) {
+            String[] user_domain = user.split("@");
+            var client = UsersClientFactory.get(domain);
+
+            return client.getUser(user_domain[0], pwd);
+        }
+
+        /**
+         * Finds a message in subscribers' messages
+         *
+         * @param mid message id
+         * @param subs subscribers list
+         */
+        public Message propagateSingle(long mid, List<String> subs){
+            Message message = null;
+
+            for (String u : subs) {
+                String[] user_domain = u.split("@");
+
+                if(user_domain[1].equals(domain)) {
+                    // Inside domain propagation
+                    message = feeds.get(u).getMessage(mid);
+
+                } else {
+                    var client = FeedsClientFactory.get(user_domain[1]);
+                    message = client.getMessage(u, mid).value();
+                }
+
+                // Quit if found..
+                if (message != null){ break; }
+            }
+
+            return message;
+        }
+
+        /**
+         * Gets messages from subscribers
+         *
+         * @param time newest time
+         * @param subs user subs
+         */
+        public List<Message> propagateList(long time, List<String> subs){
+            List<Message> messages = new LinkedList<>();
+
+            for (String u : subs) {
+                String[] user_domain = u.split("@");
+
+                if(user_domain[1].equals(domain)) {
+                    // Inside domain propagation
+                    messages.addAll(new LinkedList<>(feeds.get(u).getMessages(time)));
+                } else {
+                    var client = FeedsClientFactory.get(user_domain[1]);
+
+                    // This getMessages also creates propagation, and we don't want that..
+                    // We must filter by the name of the owner
+                    var unfilteredMessages = new LinkedList<>(client.getMessages(u, time).value());
+                    var filteredMessages = unfilteredMessages.stream().filter(m -> m.getUser().equals(user_domain[0])).toList();
+                    messages.addAll(filteredMessages);
+                }
+            }
+
+            return messages;
+        }
+    }
+
     /** Constants */
     private final ConcurrentHashMap<String, Feed> feeds = new ConcurrentHashMap<>();
     private static final Logger LOG = Logger.getLogger(JavaUsers.class.getName());
+    private static final String UPDATE_FEED_ADD = "ADD";
+    private static final String UPDATE_FEED_DELETE = "DELETE";
 
     /** Variables */
     private final String domain;
     private final long base;
+    private final Propagator propagator;
 
     /** Constructor */
     public JavaFeeds(String domain, long base) {
         this.domain = domain;
         this.base = base;
+        propagator = new Propagator();
     }
 
     @Override
@@ -45,14 +131,13 @@ public class JavaFeeds implements Feeds {
         }
 
         // Check if user exists in domain or if password is correct
-        var result = requestUser(user, pwd);
+        var result = propagator.requestUser(user, pwd);
         if (!result.isOK()) {
             return Result.error(result.error());
         }
 
         // Insert message in feed
-        aux_postMessage(user, message);
-        post_propagateToFollowers(message, feeds.get(user).getFollowers());
+        feeds.put(user, updateFeedMessage(message, feeds.get(user), UPDATE_FEED_ADD));
 
         return Result.ok(message.getId());
     }
@@ -68,7 +153,7 @@ public class JavaFeeds implements Feeds {
         }
 
         // Check if user exists in domain
-        var result = requestUser(user, "");
+        var result = propagator.requestUser(user, "");
         if (!result.isOK() && result.error().equals(Result.ErrorCode.NOT_FOUND)) {
             return Result.error(result.error());
         }
@@ -81,8 +166,7 @@ public class JavaFeeds implements Feeds {
         }
 
         // Remove message from feed
-        aux_removeFromPersonalFeed(user, message);
-        remove_propagateToFollowers(message, feeds.get(user).getFollowers());
+        feeds.put(user, updateFeedMessage(message, feeds.get(user), UPDATE_FEED_DELETE));
 
         return Result.ok(null);
     }
@@ -92,9 +176,12 @@ public class JavaFeeds implements Feeds {
         LOG.info("getMessage : " + mid);
 
         /*@TODO Add domain propagation*/
+        /* Inner propagation in done */
 
-        var result = requestUser(user, "");
-        Message message = feeds.get(user).getMessage(mid);
+        var result = propagator.requestUser(user, "");
+        Feed feed = feeds.get(user);
+        Message message = feed.getMessage(mid);
+        if(message == null) { message = propagator.propagateSingle(mid, feeds.get(user).getSubscribers()); }  // Propagate to get message..
 
         // Check if user or message exists
         if ((!result.isOK() && result.error().equals(Result.ErrorCode.NOT_FOUND)) || message == null) {
@@ -106,18 +193,25 @@ public class JavaFeeds implements Feeds {
 
     @Override
     public Result<List<Message>> getMessages(String user, long time) {
+        LOG.info("getMessages : " + user + "; time: " +time);
         /*@TODO Add domain propagation*/
+        /* Inner propagation in done */
 
         // Check if user exists in domain or if password is correct
-        var result = requestUser(user, "");
+        var result = propagator.requestUser(user, "");
         if (!result.isOK() && result.error().equals(Result.ErrorCode.NOT_FOUND)) {
             return Result.error(result.error());
         }
 
         Feed feed = feeds.get(user);
-        feeds.put(user, feed == null ? feed = new Feed() : feed);
+        if(feed == null) { return Result.ok(new LinkedList<>()); }  // If there are no messages, return immediately..
 
-        return Result.ok(feed.getMessages(time));
+        // Concatenate messages
+        var ownMessages = feed.getMessages(time).stream();
+        var propagatedMessages = propagator.propagateList(time, feed.getSubscribers()).stream();
+        var merged = Stream.concat(ownMessages, propagatedMessages).toList();
+
+        return Result.ok(merged);
     }
 
     @Override
@@ -131,13 +225,13 @@ public class JavaFeeds implements Feeds {
         }
 
         // Check if user exists in domain or if password is correct
-        var result = requestUser(user, pwd);
+        var result = propagator.requestUser(user, pwd);
         if (!result.isOK()) {
             return Result.error(result.error());
         }
 
         // Add subscription
-        aux_subUser(user, userSub);
+        feeds.put(user, updateFeedSubscriber(user, userSub, UPDATE_FEED_ADD));
 
         return Result.ok(null);
     }
@@ -153,13 +247,13 @@ public class JavaFeeds implements Feeds {
         }
 
         // Check if user exists in domain or if password is correct
-        var result = requestUser(user, pwd);
+        var result = propagator.requestUser(user, pwd);
         if (!result.isOK()) {
             return Result.error(result.error());
         }
 
         // Unsubscribe
-        aux_unsubscribeUser(user, userSub);
+        feeds.put(user, updateFeedSubscriber(user, userSub, UPDATE_FEED_DELETE));
 
         return Result.ok(null);
     }
@@ -169,103 +263,47 @@ public class JavaFeeds implements Feeds {
         LOG.info("listSubs from user: " + user);
 
         // Check if user data is valid
-        var result = requestUser(user, "");
+        var result = propagator.requestUser(user, "");
         if (!result.isOK() && result.error().equals(Result.ErrorCode.NOT_FOUND)) {
             return Result.error(result.error());
         }
 
         Feed feed = feeds.get(user);
-        feeds.put(user, feed == null ? feed = new Feed() : feed);
+        if(feed == null) { feed = new Feed(); }
 
         return Result.ok(feed.getSubscribers());
     }
 
-    /** Auxiliary methods */
+    private Feed updateFeedMessage(Message message, Feed oldFeed, String updateOp){
+        Feed feed = oldFeed;
+        if(feed == null) { feed = new Feed(); }
 
-    private void aux_postMessage(String user, Message message){
+        if(updateOp.equals(UPDATE_FEED_ADD)) {
+            // Add message
+            message.setId(Globals.NUM_SEQ.get() * 256 + base);
+            feed.addMessage(message);
+        } else if (updateOp.equals(UPDATE_FEED_DELETE)){
+            // Remove message
+            feed.removeMessage(message);
+        }
+
+        return feed;
+    }
+
+    private Feed updateFeedSubscriber(String user, String userSub, String updateOp) {
+        // Gets feeds
         Feed feed = feeds.get(user);
         if(feed == null) { feed = new Feed(); }
 
-        message.setId(Globals.NUM_SEQ.get() * 256 + base);
-        feed.addMessage(message);
-        feeds.put(user, feed);
-    }
-
-
-    private void aux_removeFromPersonalFeed(String user, Message message){
-        Feed feed = feeds.get(user);
-        if(feed == null) { return; }
-
-        feed.removeMessage(message);
-        feeds.put(user, feed);
-    }
-
-    private void aux_subUser(String user, String userSub) {
-        // Gets feeds
-        Feed feedUser = feeds.get(user);
-        Feed feedUserSub = feeds.get(userSub);
-        if(feedUser == null) { feedUser = new Feed(); }
-        if(feedUserSub == null) { feedUserSub = new Feed(); }
-
-        // Adds subscriber to user and follower to subscribed user
-        feedUser.addSubscriber(userSub);
-        feedUserSub.addFollower(user);
+        if(updateOp.equals(UPDATE_FEED_ADD)) {
+            // Add subscriber
+            feed.addSubscriber(userSub);
+        } else if (updateOp.equals(UPDATE_FEED_DELETE)){
+            // Remove message
+            feed.removeSubscriber(userSub);
+        }
 
         // Merge
-        feeds.put(user, feedUser);
-        feeds.put(userSub, feedUserSub);
-    }
-
-    private void aux_unsubscribeUser(String user, String userSub) {
-        // Gets feed
-        Feed feedUser = feeds.get(user);
-        Feed feedUserSub = feeds.get(userSub);
-
-        // Removes subscribed user from user and removes follower from previously subscribed user
-        feedUser.removeSubscriber(userSub);
-        feedUserSub.removeFollower(user);
-
-        // Merge
-        feeds.put(user, feedUser);
-        feeds.put(userSub, feedUserSub);
-    }
-
-    /**
-     * Adds message to all user's followers' feeds
-     * @param message message to post
-     * @param followers user's followers
-     */
-    private void post_propagateToFollowers(Message message, List<String> followers){
-        /*@TODO Add domain propagation*/
-
-        for (String u : followers){
-            aux_postMessage(u, message);
-        }
-    }
-
-    /**
-     * Removes message from all user's followers' feeds
-     * @param message message to remove
-     * @param followers user's followers
-     */
-    private void remove_propagateToFollowers(Message message, List<String> followers){
-        /*@TODO Add domain propagation*/
-
-        for (String u : followers){
-            aux_removeFromPersonalFeed(u, message);
-        }
-    }
-
-    /**
-     * Creates GET request to user server from same domain to get the user
-     * @param user user id@domain
-     * @param pwd password
-     * @return Result
-     */
-    private Result<User> requestUser(String user, String pwd) {
-        String[] user_domain = user.split("@");
-        var client = UsersClientFactory.get(domain);
-
-        return client.getUser(user_domain[0], pwd);
+        return feed;
     }
 }
