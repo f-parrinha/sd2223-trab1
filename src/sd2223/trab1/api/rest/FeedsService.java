@@ -141,6 +141,19 @@ public interface FeedsService {
 
 
 	/**
+	 * @TODO - Fix these parameters and implement methods to fix test 7b
+	 * @param name
+	 * @param pwd
+	 * @return
+	 *
+	@DELETE
+	@Path("/{" + USER+ "}")
+	@Produces(MediaType.APPLICATION_JSON)
+	User deleteFeed(@PathParam(NAME) String name);
+	*/
+
+
+	/**
 	 * Subscribed users.
 	 *
 	 * @param user user being accessed (format user@domain)

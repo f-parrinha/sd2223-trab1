@@ -52,7 +52,6 @@ public class JavaFeeds implements Feeds {
             Message message = null;
             for (String u : subs) {
                 String[] user_domain = u.split("@");
-                System.out.println(user_domain[1]);
 
                 if(user_domain[1].equals(domain)) {
                     // Internal domain propagation
@@ -155,7 +154,8 @@ public class JavaFeeds implements Feeds {
         }
 
         // Check if message exists
-        Message message = feeds.get(user).getMessage(mid);
+        var feed = feeds.get(user);
+        Message message = feed == null ? null : feed.getMessage(mid);
         if(message == null) {
             return Result.error(Result.ErrorCode.NOT_FOUND);
         }
@@ -178,12 +178,17 @@ public class JavaFeeds implements Feeds {
         // User is local
         var result = propagator.requestUser(user, "", domain);
         Feed feed = feeds.get(user);
-        Message message = feed.getMessage(mid);
 
+        if ((!result.isOK() && result.error().equals(Result.ErrorCode.NOT_FOUND)) || feed == null) {
+            return Result.error(Result.ErrorCode.NOT_FOUND);
+        }
+
+        // Get message
+        Message message = feed.getMessage(mid);
         if(message == null) { message = propagator.propagateGetSingle(mid, feeds.get(user).getSubscribers()); }  // Propagate to get message...
 
-        // Check if user or message exists
-        if ((!result.isOK() && result.error().equals(Result.ErrorCode.NOT_FOUND)) || message == null) {
+        // Check if message exists
+        if (message == null) {
             return Result.error(Result.ErrorCode.NOT_FOUND);
         }
 

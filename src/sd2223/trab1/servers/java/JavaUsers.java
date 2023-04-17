@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import sd2223.trab1.api.User;
@@ -20,7 +21,7 @@ import sd2223.trab1.api.java.Users;
 public class JavaUsers implements Users {
 
 	/** Variables */
-	private final Map<String,User> users = new HashMap<>();
+	private final ConcurrentHashMap<String,User> users = new ConcurrentHashMap<>();
 
 	@Override
 	public Result<String> createUser(User user) {
@@ -97,6 +98,7 @@ public class JavaUsers implements Users {
 		if( !user.getPwd().equals( pwd)) {
 			return Result.error(ErrorCode.FORBIDDEN);
 		}
+
 
 		users.remove(user.getName());
 
