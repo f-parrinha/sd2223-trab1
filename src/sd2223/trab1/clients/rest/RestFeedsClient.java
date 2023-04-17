@@ -66,6 +66,16 @@ public class RestFeedsClient extends RestClient implements Feeds {
         return super.toJavaResult(r, (Class<List<Message>>)(Object)List.class);
     }
 
+    @SuppressWarnings("unchecked")
+    private Result<List<Message>> clt_getMessagesFromRemote(String user, String originalDomain, long time) {
+        Response r = target.path(user).path(originalDomain)
+                .path(Long.toString(time)).request()
+                .accept(MediaType.APPLICATION_JSON)
+                .get();
+
+        return super.toJavaResult(r, (Class<List<Message>>)(Object)List.class);
+    }
+
     private Result<Void> clt_subUser(String user, String userSub, String pwd) {
         Response r = target.path(user).path(userSub)
                 .queryParam(FeedsService.PWD, pwd).request()
@@ -111,6 +121,11 @@ public class RestFeedsClient extends RestClient implements Feeds {
     @Override
     public Result<List<Message>> getMessages(String user, long time) {
         return super.reTry(() -> clt_getMessages(user, time));
+    }
+
+    @Override
+    public Result<List<Message>> getMessagesFromRemote(String user, String originalDomain, long time) {
+        return super.reTry(() -> clt_getMessagesFromRemote(user, originalDomain, time));
     }
 
     @Override

@@ -4,6 +4,7 @@ import jakarta.inject.Singleton;
 import sd2223.trab1.api.Message;
 import sd2223.trab1.api.java.Feeds;
 import sd2223.trab1.api.rest.FeedsService;
+import sd2223.trab1.api.soap.UsersException;
 import sd2223.trab1.servers.java.JavaFeeds;
 
 import java.util.List;
@@ -40,6 +41,11 @@ public class RestFeedsResource extends RestResource implements FeedsService {
     @Override
     public List<Message> getMessages(String user, long time) {
         return super.fromJavaResult(impl.getMessages(user, time));
+    }
+
+    @Override
+    public List<Message> getMessagesFromRemote(String user, String originalDomain, long time) {
+        return super.fromJavaResult(impl.getMessagesFromRemote(user, originalDomain, time));
     }
 
     @Override

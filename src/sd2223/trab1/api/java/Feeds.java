@@ -16,6 +16,8 @@ public interface Feeds {
 
     Result<List<Message>> getMessages(String user, long time);
 
+    Result<List<Message>> getMessagesFromRemote(String user, String originalDomain, long time);
+
     Result<Void> subUser(String user, String userSub, String pwd);
 
     Result<Void> unsubscribeUser(String user, String userSub, String pwd);

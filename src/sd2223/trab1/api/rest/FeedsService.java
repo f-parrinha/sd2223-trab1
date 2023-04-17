@@ -77,8 +77,8 @@ public interface FeedsService {
 	Message getMessage(@PathParam(USER) String user, @PathParam(MID) long mid) throws UsersException;
 
 	/**
-	 * Returns a list of all messages stored in the server for a given user newer than time
-	 * (note: may be a remote user)
+	 * Returns a list of all messages stored in the server for a given user newer than time,
+	 * including subscribers' messages. Generates propagation (note: may be a remote user)
 	 * 
 	 * @param user user feed being accessed (format user@domain)
 	 * @param time the oldest time of the messages to be returned
@@ -89,6 +89,20 @@ public interface FeedsService {
 	@Path("/{" + USER +"}")
 	@Produces(MediaType.APPLICATION_JSON)
 	List<Message> getMessages(@PathParam(USER) String user, @QueryParam(TIME) long time) throws UsersException;
+
+	/**
+	 * Returns a list of all messages stored in the server for a given user newer than time,
+	 * when called from remote domain. Executes without propagation
+	 *
+	 * @param user user feed being accessed (format user@domain)
+	 * @param time the oldest time of the messages to be returned
+	 * @return	200 a list of messages, potentially empty;
+	 *  		404 if the user does not exist.
+	 */
+	@GET
+	@Path("/{" + USER + "}/{" + DOMAIN + "}/{" + TIME + "}")
+	@Produces(MediaType.APPLICATION_JSON)
+	List<Message> getMessagesFromRemote(@PathParam(USER) String user, @PathParam(DOMAIN) String domain, @PathParam(TIME) long time) throws UsersException;
 
 
 

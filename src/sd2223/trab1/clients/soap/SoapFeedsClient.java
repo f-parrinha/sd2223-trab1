@@ -66,6 +66,11 @@ public class SoapFeedsClient extends SoapClient implements Feeds {
     }
 
     @Override
+    public Result<List<Message>> getMessagesFromRemote(String user, String originalDomain, long time) {
+        return super.reTry( () -> super.toJavaResult( () -> stub().getMessagesFromRemote(user, originalDomain, time)));
+    }
+
+    @Override
     public Result<Void> subUser(String user, String userSub, String pwd) {
 
         return super.reTry( () -> super.toJavaResult( () -> stub().subUser(user, userSub, pwd)));

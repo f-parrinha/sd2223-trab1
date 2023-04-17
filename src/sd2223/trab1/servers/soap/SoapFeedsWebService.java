@@ -45,6 +45,11 @@ public class SoapFeedsWebService extends SoapWebService<UsersException> implemen
     }
 
     @Override
+    public List<Message> getMessagesFromRemote(String user, String originalDomain, long time) throws UsersException {
+        return super.fromJavaResult(impl.getMessagesFromRemote(user, originalDomain, time));
+    }
+
+    @Override
     public void subUser(String user, String userSub, String pwd) throws UsersException {
         super.fromJavaResult(impl.subUser(user, userSub, pwd));
     }

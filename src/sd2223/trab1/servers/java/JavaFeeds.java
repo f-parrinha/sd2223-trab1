@@ -12,7 +12,6 @@ import sd2223.trab1.util.Globals;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 /**
@@ -51,9 +50,23 @@ public class JavaFeeds implements Feeds {
          */
         public Message propagateGetSingle(long mid, List<String> subs){
             Message message = null;
-
             for (String u : subs) {
-                message = feeds.get(u).getMessage(mid);
+                String[] user_domain = u.split("@");
+                System.out.println(user_domain[1]);
+
+                if(user_domain[1].equals(domain)) {
+                    // Internal domain propagation
+                    var feed = feeds.get(u);
+                    message = feed == null ? null :feed.getMessage(mid);
+
+                } else {
+                    // Remote domain propagation
+                    var client = FeedsClientFactory.get(user_domain[1]);
+                    var result = client.getMessage(u, mid);
+
+                    if(!result.isOK()) { continue; }
+                    message = result.value();
+                }
 
                 // Quit if found..
                 if (message != null){ break; }
@@ -68,22 +81,33 @@ public class JavaFeeds implements Feeds {
          * @param time newest time
          * @param subs user subs
          */
-        public List<Message> propagateGetList(long time, List<String> subs){
+        public List<Message> propagateGetList(long time, List<String> subs, String originalDomain){
             List<Message> messages = new LinkedList<>();
 
-            for(var u : subs){
-                var list = feeds.get(u).getMessages(time);
-                if(list == null) { list = new LinkedList<>(); }
+            for (String u : subs) {
+                String[] user_domain = u.split("@");
 
-                messages.addAll(new LinkedList<>(list));
+                if(user_domain[1].equals(domain)) {
+                    // Internal domain propagation
+                    var feed = feeds.get(u);
+                    messages.addAll(new LinkedList<>(feed == null ? new LinkedList<>() : feed.getMessages(time)));
+                } else {
+                    // Remote domain propagation
+                    var client = FeedsClientFactory.get(user_domain[1]);
+                    var result = client.getMessagesFromRemote(u, originalDomain, time);
+
+                    if(!result.isOK()) { continue; }
+
+                    messages.addAll(result.value());
+                }
             }
+
             return messages;
         }
     }
 
     /** Constants */
     private final ConcurrentHashMap<String, Feed> feeds = new ConcurrentHashMap<>();
-    private static final Logger LOG = Logger.getLogger(JavaUsers.class.getName());
     private static final String UPDATE_FEED_ADD = "ADD";
     private static final String UPDATE_FEED_DELETE = "DELETE";
 
@@ -101,11 +125,8 @@ public class JavaFeeds implements Feeds {
 
     @Override
     public Result<Long> postMessage(String user, String pwd, Message message) {
-        LOG.info("postMessage : " + message);
-
         // Check if user data is valid
         if(user == null || pwd == null || !user.split("@")[1].equals(domain)) {
-            LOG.info("Name or Password null or user does not belong in domain.");
             return Result.error(Result.ErrorCode.BAD_REQUEST);
         }
 
@@ -123,11 +144,8 @@ public class JavaFeeds implements Feeds {
 
     @Override
     public Result<Void> removeFromPersonalFeed(String user, long mid, String pwd) {
-        LOG.info("removeFromPersonalFeed : " + mid);
-
         // Check if user data is valid
         if(user == null || pwd == null) {
-            LOG.info("Name or Password null.");
             return Result.error(Result.ErrorCode.BAD_REQUEST);
         }
 
@@ -140,7 +158,6 @@ public class JavaFeeds implements Feeds {
         // Check if message exists
         Message message = feeds.get(user).getMessage(mid);
         if(message == null) {
-            LOG.info("Message does not exist");
             return Result.error(Result.ErrorCode.NOT_FOUND);
         }
 
@@ -152,21 +169,11 @@ public class JavaFeeds implements Feeds {
 
     @Override
     public Result<Message> getMessage(String user, long mid) {
-        LOG.info("getMessage : " + mid);
-
-        /*@TODO Add domain propagation*/
-        // Check propagation for outside domain
-        if(!user.split("@")[1].equals(domain)) {
-            var client = FeedsClientFactory.get(user.split("@")[0]);
-
-            return client.getMessage(user, mid);
-        }
-
         // Check message in feed, propagate internally if needed
         var result = propagator.requestUser(user, "", domain);
         Feed feed = feeds.get(user);
         Message message = feed.getMessage(mid);
-        if(message == null) { message = propagator.propagateGetSingle(mid, feeds.get(user).getSubscribers()); }  // Propagate to get message..
+        if(message == null) { message = propagator.propagateGetSingle(mid, feeds.get(user).getSubscribers()); }  // Propagate to get message...
 
         // Check if user or message exists
         if ((!result.isOK() && result.error().equals(Result.ErrorCode.NOT_FOUND)) || message == null) {
@@ -178,16 +185,6 @@ public class JavaFeeds implements Feeds {
 
     @Override
     public Result<List<Message>> getMessages(String user, long time) {
-        LOG.info("getMessages : " + user + "; time: " +time);
-
-        /*@TODO Add domain propagation*/
-        // Check propagation for outside domain
-        if(!user.split("@")[1].equals(domain)) {
-            var client = FeedsClientFactory.get(user.split("@")[0]);
-
-            return client.getMessages(user, time);
-        }
-
         // Check if user exists in domain or if password is correct
         var result = propagator.requestUser(user, "", domain);
         if (!result.isOK() && result.error().equals(Result.ErrorCode.NOT_FOUND)) {
@@ -199,19 +196,38 @@ public class JavaFeeds implements Feeds {
 
         // Concatenate messages
         var ownMessages = feed.getMessages(time).stream();
-        var propagatedMessages = propagator.propagateGetList(time, feed.getSubscribers()).stream();
+        var propagatedMessages = propagator.propagateGetList(time, feed.getSubscribers(), user.split("@")[1]).stream();
         var merged = Stream.concat(ownMessages, propagatedMessages).toList();
 
         return Result.ok(merged);
     }
 
     @Override
-    public Result<Void> subUser(String user, String userSub, String pwd) {
-        LOG.info("from: " + user + "; subUser: " + userSub);
+    public Result<List<Message>> getMessagesFromRemote(String user, String originalDomain, long time) {
+        // Check if user exists in domain or if password is correct
+        var result = propagator.requestUser(user, "", domain);
+        if (!result.isOK() && result.error().equals(Result.ErrorCode.NOT_FOUND)) {
+            return Result.error(result.error());
+        }
 
+        // Check if not in a remote domain
+        if(user.split("@")[1].equals(originalDomain)) {
+            return Result.error(Result.ErrorCode.BAD_REQUEST);
+        }
+
+        Feed feed = feeds.get(user);
+        if(feed == null) { return Result.ok(new LinkedList<>()); }  // If there are no messages, return immediately..
+
+        // Gets own messages
+        var messages = feed.getMessages(time);
+
+        return Result.ok(messages);
+    }
+
+    @Override
+    public Result<Void> subUser(String user, String userSub, String pwd) {
         // Check if user data is valid
         if(user == null || pwd == null) {
-            LOG.info("Name or Password null.");
             return Result.error(Result.ErrorCode.BAD_REQUEST);
         }
 
@@ -229,11 +245,8 @@ public class JavaFeeds implements Feeds {
 
     @Override
     public Result<Void> unsubscribeUser(String user, String userSub, String pwd) {
-        LOG.info("from: " + user + "; unsubscribeUser: " + userSub);
-
         // Check if user data is valid
         if(user == null || pwd == null) {
-            LOG.info("Name or Password null.");
             return Result.error(Result.ErrorCode.BAD_REQUEST);
         }
 
@@ -251,8 +264,6 @@ public class JavaFeeds implements Feeds {
 
     @Override
     public Result<List<String>> listSubs(String user) {
-        LOG.info("listSubs from user: " + user);
-
         // Check if user data is valid
         var result = propagator.requestUser(user, "", domain);
         if (!result.isOK() && result.error().equals(Result.ErrorCode.NOT_FOUND)) {
@@ -282,7 +293,6 @@ public class JavaFeeds implements Feeds {
     }
 
     private Feed updateFeedSubscriber(String user, String userSub, String updateOp) {
-        // Gets feeds
         Feed feed = feeds.get(user);
         if(feed == null) { feed = new Feed(); }
 

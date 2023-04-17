@@ -4,6 +4,8 @@ import java.util.List;
 
 import jakarta.jws.WebMethod;
 import jakarta.jws.WebService;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.QueryParam;
 import sd2223.trab1.api.Message;
 
 @WebService(serviceName=FeedsService.NAME, targetNamespace=FeedsService.NAMESPACE, endpointInterface=FeedsService.INTERFACE)
@@ -56,8 +58,8 @@ public interface FeedsService {
 	Message getMessage(String user, long mid) throws FeedsException;
 
 	/**
-	 * Returns a list of all messages stored in the server for a given user newer than time
-	 * (note: may be a remote user)
+	 * Returns a list of all messages stored in the server for a given user newer than time,
+	 * including subscribers' messages. Generates propagation (note: may be a remote user)
 	 * 
 	 * @param user user feed being accessed (format user@domain)
 	 * @param time the oldest time of the messages to be returned
@@ -66,6 +68,18 @@ public interface FeedsService {
 	 */
 	@WebMethod
 	List<Message> getMessages(String user, long time) throws FeedsException;
+
+	/**
+	 * Returns a list of all messages stored in the server for a given user newer than time,
+	 * when called from remote domain. Executes without propagation
+	 *
+	 * @param user user feed being accessed (format user@domain)
+	 * @param time the oldest time of the messages to be returned
+	 * @return	a list of messages, potentially empty;
+	 * @throws 	NOT_FOUND if the user does not exist.
+	 */
+	@WebMethod
+	List<Message> getMessagesFromRemote(String user, String originalDomain, long time) throws UsersException;
 
 	/**
 	 * Subscribe a user.
