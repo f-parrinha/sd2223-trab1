@@ -79,7 +79,7 @@ public interface FeedsService {
 	 * @throws 	NOT_FOUND if the user does not exist.
 	 */
 	@WebMethod
-	List<Message> getMessagesFromRemote(String user, String originalDomain, long time) throws UsersException;
+	List<Message> getMessagesFromRemote(String user, String originalDomain, long time) throws FeedsException;
 
 	/**
 	 * Subscribe a user.

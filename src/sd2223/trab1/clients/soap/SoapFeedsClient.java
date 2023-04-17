@@ -5,13 +5,13 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import jakarta.xml.ws.BindingProvider;
 import sd2223.trab1.api.Message;
 import sd2223.trab1.api.java.Feeds;
 import sd2223.trab1.api.java.Result;
 import sd2223.trab1.api.soap.FeedsService;
 
 import jakarta.xml.ws.Service;
+import jakarta.xml.ws.BindingProvider;
 
 
 

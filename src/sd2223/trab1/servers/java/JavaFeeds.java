@@ -172,6 +172,9 @@ public class JavaFeeds implements Feeds {
         // Check message in feed, propagate internally if needed
         var result = propagator.requestUser(user, "", domain);
         Feed feed = feeds.get(user);
+        if(feed == null) {
+            return Result.error(Result.ErrorCode.BAD_REQUEST);
+        }
         Message message = feed.getMessage(mid);
         if(message == null) { message = propagator.propagateGetSingle(mid, feeds.get(user).getSubscribers()); }  // Propagate to get message...
 

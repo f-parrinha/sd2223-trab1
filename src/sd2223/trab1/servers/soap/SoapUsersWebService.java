@@ -1,6 +1,5 @@
 package sd2223.trab1.servers.soap;
 
-
 import java.util.List;
 import java.util.logging.Logger;
 
