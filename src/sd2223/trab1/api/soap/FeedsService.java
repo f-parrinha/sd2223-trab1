@@ -117,4 +117,7 @@ public interface FeedsService {
 	 */
 	@WebMethod
 	List<String> listSubs(String user) throws FeedsException;
+
+	@WebMethod
+	void deleteFeed(String user) throws FeedsException;
 }

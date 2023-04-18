@@ -103,6 +103,11 @@ public class RestFeedsClient extends RestClient implements Feeds {
         return super.toJavaResult(r, (Class<List<String>>)(Object)List.class);
     }
 
+    private Result<Void> clt_deleteFeed(String user) {
+        Response r = target.path(user).request().accept(MediaType.APPLICATION_JSON).delete();
+        return super.toJavaResult(r, Void.class);
+    }
+
     @Override
     public Result<Long> postMessage(String user, String pwd, Message message) {
         return super.reTry(() -> clt_postMessage(user, pwd, message));
@@ -141,5 +146,10 @@ public class RestFeedsClient extends RestClient implements Feeds {
     @Override
     public Result<List<String>> listSubs(String user) {
         return super.reTry(() -> clt_listSubs(user));
+    }
+
+    @Override
+    public Result<Void> deleteFeed(String user) {
+        return super.reTry( () -> clt_deleteFeed(user));
     }
 }

@@ -11,6 +11,7 @@ import sd2223.trab1.api.User;
 import sd2223.trab1.api.java.Result;
 import sd2223.trab1.api.java.Result.ErrorCode;
 import sd2223.trab1.api.java.Users;
+import sd2223.trab1.clients.FeedsClientFactory;
 
 /**
  * Class JavaUsers - Handles users resource
@@ -101,6 +102,11 @@ public class JavaUsers implements Users {
 
 
 		users.remove(user.getName());
+
+		String domain = user.getDomain();
+		var client = FeedsClientFactory.get(domain);
+		client.deleteFeed(user.getName());
+
 
 		return Result.ok(user);
 	}

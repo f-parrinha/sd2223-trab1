@@ -295,6 +295,17 @@ public class JavaFeeds implements Feeds {
         return Result.ok(feed.getSubscribers());
     }
 
+    @Override
+    public Result<Void> deleteFeed(String user) {
+        var result = propagator.requestUser(user, "", domain);
+        if (!result.isOK() && result.error().equals(Result.ErrorCode.NOT_FOUND)) {
+            return Result.error(result.error());
+        }
+
+        feeds.remove(user);
+        return Result.ok(null);
+    }
+
     private Feed updateFeedMessage(Message message, Feed oldFeed, String updateOp){
         Feed feed = oldFeed;
         if(feed == null) { feed = new Feed(); }

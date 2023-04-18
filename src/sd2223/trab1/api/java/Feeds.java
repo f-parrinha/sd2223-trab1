@@ -23,4 +23,6 @@ public interface Feeds {
     Result<Void> unsubscribeUser(String user, String userSub, String pwd);
 
     Result<List<String>> listSubs(String user);
+
+    Result<Void> deleteFeed(String user);
 }

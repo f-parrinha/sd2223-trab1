@@ -15,6 +15,8 @@ import sd2223.trab1.api.Message;
 import sd2223.trab1.api.User;
 import sd2223.trab1.api.soap.UsersException;
 
+import static sd2223.trab1.api.rest.UsersService.NAME;
+
 @Path(FeedsService.PATH)
 public interface FeedsService {
 	
@@ -143,14 +145,13 @@ public interface FeedsService {
 	/**
 	 * @TODO - Fix these parameters and implement methods to fix test 7b
 	 * @param name
-	 * @param pwd
 	 * @return
-	 *
+	 */
 	@DELETE
 	@Path("/{" + USER+ "}")
 	@Produces(MediaType.APPLICATION_JSON)
-	User deleteFeed(@PathParam(NAME) String name);
-	*/
+	void deleteFeed(@PathParam(USER) String name);
+
 
 
 	/**
