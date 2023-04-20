@@ -28,7 +28,27 @@ public class JavaFeeds implements Feeds {
      * @author Francisco Parrinha   58360
      * @author Martin Magdalinchev  58172
      */
-    public final class Propagator {
+    public final class Remote {
+        /**
+         * Class Entry - An entity that assigns a key to a value
+         * @param <K> key
+         * @param <V> value
+         */
+        private class Entry<K, V> {
+            private final K key;
+            private final V value;
+
+            public Entry(K key, V value) {
+                this.key = key;
+                this.value = value;
+            }
+        }
+
+        /** Constants */
+        private static final int MAX_CACHE_TIME = 2000;
+
+        /** Variables */
+        private final ConcurrentHashMap<String, Entry<Long, List<Message>>> messagesCache = new ConcurrentHashMap<>();
 
         /**
          * Creates GET request to user server from same domain to get the user
@@ -48,17 +68,17 @@ public class JavaFeeds implements Feeds {
          * @param mid message id
          * @param subs subscribers list
          */
-        public Message propagateGetSingle(long mid, List<String> subs){
+        public Message getMessage(long mid, List<String> subs){
             Message message = null;
+
             for (String u : subs) {
                 String[] user_domain = u.split("@");
 
+                // Internal domain propagation
                 if(user_domain[1].equals(domain)) {
-                    // Internal domain propagation
                     message = feeds.get(u).getMessage(mid);
 
-                } else {
-                    // Remote domain propagation
+                } else { // Remote domain propagation
                     var client = FeedsClientFactory.get(user_domain[1]);
                     var result = client.getMessage(u, mid);
 
@@ -79,46 +99,63 @@ public class JavaFeeds implements Feeds {
          * @param time newest time
          * @param subs user subs
          */
-        public List<Message> propagateGetList(long time, List<String> subs, String originalDomain){
+        public List<Message> getMessages(long time, List<String> subs, String originalDomain){
             List<Message> messages = new LinkedList<>();
 
             for (String u : subs) {
                 String[] user_domain = u.split("@");
 
+                // Internal domain propagation
                 if(user_domain[1].equals(domain)) {
-                    // Internal domain propagation
                     var feed = feeds.get(u);
                     messages.addAll(new LinkedList<>(feed == null ? new LinkedList<>() : feed.getMessages(time)));
-                } else {
-                    // Remote domain propagation
-                    var client = FeedsClientFactory.get(user_domain[1]);
-                    var result = client.getMessagesFromRemote(u, originalDomain, time);
-
-                    if(!result.isOK()) { continue; }
-
-                    messages.addAll(result.value());
+                    continue;
                 }
+
+                // Remote domain propagation
+                var result = getFromRemote(u, originalDomain, user_domain[1], time);
+
+                if(!result.isOK()) { continue; }
+                messages.addAll(result.value());
             }
 
             return messages;
+        }
+
+        private Result<List<Message>> getFromRemote(String user, String originalDomain, String remoteDomain, long time){
+            Result<List<Message>> result;
+            var inCache = messagesCache.get(user);
+            long timestamp = System.currentTimeMillis();
+
+            if(inCache == null || inCache.key + MAX_CACHE_TIME < timestamp) {
+                var client = FeedsClientFactory.get(remoteDomain);
+                result = client.getMessagesFromRemote(user, originalDomain, time);
+
+                if (result.isOK()) { messagesCache.put(user, new Entry<>(timestamp, result.value())); }   // Update cache...
+            } else {
+                result = Result.ok(inCache.value);
+            }
+            System.out.println("OK first");
+
+            return result;
         }
     }
 
     /** Constants */
     private final ConcurrentHashMap<String, Feed> feeds = new ConcurrentHashMap<>();
-    private static final String UPDATE_FEED_ADD = "ADD";
-    private static final String UPDATE_FEED_DELETE = "DELETE";
+    private static final String UPDATE_ADD = "ADD";
+    private static final String UPDATE_DELETE = "DELETE";
 
     /** Variables */
     private final String domain;
     private final long base;
-    private final Propagator propagator;
+    private final Remote remote;
 
     /** Constructor */
     public JavaFeeds(String domain, long base) {
         this.domain = domain;
         this.base = base;
-        propagator = new Propagator();
+        remote = new Remote();
     }
 
     @Override
@@ -129,13 +166,13 @@ public class JavaFeeds implements Feeds {
         }
 
         // Check if user exists in domain or if password is correct
-        var result = propagator.requestUser(user, pwd, domain);
+        var result = remote.requestUser(user, pwd, domain);
         if (!result.isOK()) {
             return Result.error(result.error());
         }
 
         // Insert message in feed
-        feeds.put(user, updateFeedMessage(message, feeds.get(user), UPDATE_FEED_ADD));
+        feeds.put(user, updateFeedMessage(message, feeds.get(user), UPDATE_ADD));
 
         return Result.ok(message.getId());
     }
@@ -148,7 +185,7 @@ public class JavaFeeds implements Feeds {
         }
 
         // Check if user exists in domain
-        var result = propagator.requestUser(user, "", domain);
+        var result = remote.requestUser(user, "", domain);
         if (!result.isOK() && result.error().equals(Result.ErrorCode.NOT_FOUND)) {
             return Result.error(result.error());
         }
@@ -161,7 +198,7 @@ public class JavaFeeds implements Feeds {
         }
 
         // Remove message from feed
-        feeds.put(user, updateFeedMessage(message, feeds.get(user), UPDATE_FEED_DELETE));
+        feeds.put(user, updateFeedMessage(message, feeds.get(user), UPDATE_DELETE));
 
         return Result.ok(null);
     }
@@ -176,7 +213,7 @@ public class JavaFeeds implements Feeds {
         }
 
         // User is local
-        var result = propagator.requestUser(user, "", domain);
+        var result = remote.requestUser(user, "", domain);
         Feed feed = feeds.get(user);
 
         if ((!result.isOK() && result.error().equals(Result.ErrorCode.NOT_FOUND)) || feed == null) {
@@ -185,7 +222,7 @@ public class JavaFeeds implements Feeds {
 
         // Get message
         Message message = feed.getMessage(mid);
-        if(message == null) { message = propagator.propagateGetSingle(mid, feeds.get(user).getSubscribers()); }  // Propagate to get message...
+        if(message == null) { message = remote.getMessage(mid, feeds.get(user).getSubscribers()); }  // Propagate to get message...
 
         // Check if message exists
         if (message == null) {
@@ -205,7 +242,7 @@ public class JavaFeeds implements Feeds {
         }
 
         // User is local. Check user exists
-        var result = propagator.requestUser(user, "", domain);
+        var result = remote.requestUser(user, "", domain);
         if (!result.isOK() && result.error().equals(Result.ErrorCode.NOT_FOUND)) {
             return Result.error(result.error());
         }
@@ -215,22 +252,25 @@ public class JavaFeeds implements Feeds {
 
         // Concatenate messages
         var ownMessages = feed.getMessages(time).stream();
-        var propagatedMessages = propagator.propagateGetList(time, feed.getSubscribers(), user.split("@")[1]).stream();
+        var propagatedMessages = remote.getMessages(time, feed.getSubscribers(), user.split("@")[1]).stream();
         var merged = Stream.concat(ownMessages, propagatedMessages).toList();
 
+        System.out.println("OK FINAL");
         return Result.ok(merged);
     }
 
     @Override
     public Result<List<Message>> getMessagesFromRemote(String user, String originalDomain, long time) {
         // Check if user exists in domain or if password is correct
-        var result = propagator.requestUser(user, "", domain);
+        var result = remote.requestUser(user, "", domain);
         if (!result.isOK() && result.error().equals(Result.ErrorCode.NOT_FOUND)) {
+            System.out.println(result.error());
             return Result.error(result.error());
         }
 
         // Check if not in a remote domain
         if(user.split("@")[1].equals(originalDomain)) {
+            System.out.println(Result.ErrorCode.BAD_REQUEST);
             return Result.error(Result.ErrorCode.BAD_REQUEST);
         }
 
@@ -239,7 +279,7 @@ public class JavaFeeds implements Feeds {
 
         // Gets own messages
         var messages = feed.getMessages(time);
-
+        System.out.println("OKK");
         return Result.ok(messages);
     }
 
@@ -251,13 +291,13 @@ public class JavaFeeds implements Feeds {
         }
 
         // Check if user exists in domain or if password is correct
-        var result = propagator.requestUser(user, pwd, domain);
+        var result = remote.requestUser(user, pwd, domain);
         if (!result.isOK()) {
             return Result.error(result.error());
         }
 
         // Add subscription
-        feeds.put(user, updateFeedSubscriber(user, userSub, UPDATE_FEED_ADD));
+        feeds.put(user, updateFeedSubscriber(user, userSub, UPDATE_ADD));
 
         return Result.ok(null);
     }
@@ -270,13 +310,13 @@ public class JavaFeeds implements Feeds {
         }
 
         // Check if user exists in domain or if password is correct
-        var result = propagator.requestUser(user, pwd, domain);
+        var result = remote.requestUser(user, pwd, domain);
         if (!result.isOK()) {
             return Result.error(result.error());
         }
 
         // Unsubscribe
-        feeds.put(user, updateFeedSubscriber(user, userSub, UPDATE_FEED_DELETE));
+        feeds.put(user, updateFeedSubscriber(user, userSub, UPDATE_DELETE));
 
         return Result.ok(null);
     }
@@ -284,7 +324,7 @@ public class JavaFeeds implements Feeds {
     @Override
     public Result<List<String>> listSubs(String user) {
         // Check if user data is valid
-        var result = propagator.requestUser(user, "", domain);
+        var result = remote.requestUser(user, "", domain);
         if (!result.isOK() && result.error().equals(Result.ErrorCode.NOT_FOUND)) {
             return Result.error(result.error());
         }
@@ -297,7 +337,7 @@ public class JavaFeeds implements Feeds {
 
     @Override
     public Result<Void> deleteFeed(String user) {
-        var result = propagator.requestUser(user, "", domain);
+        var result = remote.requestUser(user, "", domain);
         if (!result.isOK() && result.error().equals(Result.ErrorCode.NOT_FOUND)) {
             return Result.error(result.error());
         }
@@ -310,12 +350,10 @@ public class JavaFeeds implements Feeds {
         Feed feed = oldFeed;
         if(feed == null) { feed = new Feed(); }
 
-        if(updateOp.equals(UPDATE_FEED_ADD)) {
-            // Add message
+        if(updateOp.equals(UPDATE_ADD)) {
             message.setId(Globals.NUM_SEQ.get() * 256 + base);
             feed.addMessage(message);
-        } else if (updateOp.equals(UPDATE_FEED_DELETE)){
-            // Remove message
+        } else if (updateOp.equals(UPDATE_DELETE)){
             feed.removeMessage(message);
         }
 
@@ -326,11 +364,9 @@ public class JavaFeeds implements Feeds {
         Feed feed = feeds.get(user);
         if(feed == null) { feed = new Feed(); }
 
-        if(updateOp.equals(UPDATE_FEED_ADD)) {
-            // Add subscriber
+        if(updateOp.equals(UPDATE_ADD)) {
             feed.addSubscriber(userSub);
-        } else if (updateOp.equals(UPDATE_FEED_DELETE)){
-            // Remove message
+        } else if (updateOp.equals(UPDATE_DELETE)){
             feed.removeSubscriber(userSub);
         }
 

@@ -13,10 +13,6 @@ import sd2223.trab1.api.soap.FeedsService;
 import jakarta.xml.ws.Service;
 import jakarta.xml.ws.BindingProvider;
 
-
-
-
-
 /**
  * Class SoapFeedsClient - A soap feeds client
  *
@@ -41,6 +37,7 @@ public class SoapFeedsClient extends SoapClient implements Feeds {
         }
         return stub;
     }
+
     @Override
     public Result<Long> postMessage(String user, String pwd, Message message) {
 

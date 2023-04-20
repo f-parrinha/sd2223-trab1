@@ -39,7 +39,7 @@ public class SoapFeedsServer {
             String serverURI = String.format(SERVER_BASE_URI, ip, PORT);
             Discovery discovery = Discovery.getInstance();
             discovery.announce(domain, Globals.FEEDS_SERVICE_NAME, serverURI);
-            Endpoint.publish(serverURI.replace(ip, "0.0.0.0"), new SoapFeedsWebService(domain, id));
+            Endpoint.publish(serverURI, new SoapFeedsWebService(domain, id));
 
             Log.info(String.format("%s Soap Server ready @ %s\n", Globals.FEEDS_SERVICE_NAME, serverURI));
 
