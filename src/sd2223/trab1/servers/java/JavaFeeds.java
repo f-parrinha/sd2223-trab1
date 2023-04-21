@@ -234,14 +234,14 @@ public class JavaFeeds implements Feeds {
 
     @Override
     public Result<List<Message>> getMessages(String user, long time) {
-        // Check user is remote
+        // Check if user is remote
         String domain = user.split("@")[1];
         if(!domain.equals(this.domain)) {
             var client = FeedsClientFactory.get(domain);
             return client.getMessages(user, time);
         }
 
-        // User is local. Check user exists
+        // User is local. Check if user exists
         var result = remote.requestUser(user, "", domain);
         if (!result.isOK() && result.error().equals(Result.ErrorCode.NOT_FOUND)) {
             return Result.error(result.error());
@@ -251,12 +251,13 @@ public class JavaFeeds implements Feeds {
         if(feed == null) { return Result.ok(new LinkedList<>()); }  // If there are no messages, return immediately..
 
         // Concatenate messages
-        var ownMessages = feed.getMessages(time).stream();
-        var propagatedMessages = remote.getMessages(time, feed.getSubscribers(), user.split("@")[1]).stream();
-        var merged = Stream.concat(ownMessages, propagatedMessages).toList();
+        var ownMessages = new LinkedList<>(feed.getMessages(time));
+        var propagatedMessages = remote.getMessages(time, feed.getSubscribers(), user.split("@")[1]);
+
+        ownMessages.addAll(propagatedMessages);
 
         System.out.println("OK FINAL");
-        return Result.ok(merged);
+        return Result.ok(ownMessages);
     }
 
     @Override
