@@ -2,6 +2,7 @@ package sd2223.trab1.clients.rest;
 
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import sd2223.trab1.api.Message;
@@ -56,24 +57,23 @@ public class RestFeedsClient extends RestClient implements Feeds {
         return super.toJavaResult(r, Message.class);
     }
 
-    @SuppressWarnings("unchecked")
+
     private Result<List<Message>> clt_getMessages(String user, long time) {
         Response r = target.path(user)
                 .queryParam(FeedsService.TIME, time).request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get();
 
-        return super.toJavaResult(r, (Class<List<Message>>)(Object)List.class);
+        return super.toJavaResult(r,  new GenericType<>() {});
     }
 
-    @SuppressWarnings("unchecked")
     private Result<List<Message>> clt_getMessagesFromRemote(String user, String originalDomain, long time) {
         Response r = target.path(user).path(originalDomain)
                 .path(Long.toString(time)).request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get();
 
-        return super.toJavaResult(r, (Class<List<Message>>)(Object)List.class);
+        return super.toJavaResult(r, new GenericType<>() {});
     }
 
     private Result<Void> clt_subUser(String user, String userSub, String pwd) {

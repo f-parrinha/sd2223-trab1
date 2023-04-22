@@ -3,6 +3,7 @@ package sd2223.trab1.clients.rest;
 import java.net.URI;
 import java.util.List;
 
+import jakarta.ws.rs.core.GenericType;
 import sd2223.trab1.api.User;
 import sd2223.trab1.api.java.Result;
 import sd2223.trab1.api.java.Users;
@@ -64,13 +65,12 @@ public class RestUsersClient extends RestClient implements Users {
 		return super.toJavaResult(r, User.class);
 	}
 
-	@SuppressWarnings("unchecked")
 	private Result<List<User>> clt_searchUsers(String pattern) {
 		Response r = target.queryParam(UsersService.QUERY, pattern).request()
 				.accept(MediaType.APPLICATION_JSON)
 				.get();
 
-		return super.toJavaResult(r, (Class<List<User>>)(Object)List.class);
+		return super.toJavaResult(r, new GenericType<>() {});
 	}
 	
 	@Override
